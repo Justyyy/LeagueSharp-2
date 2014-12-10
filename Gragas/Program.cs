@@ -189,22 +189,30 @@ namespace Gragas
         public static float GetComboDamage(Obj_AI_Base target)
         {
             float comboDamage = 0;
-
+            bool abilityFlag = false;
             if (Q.IsReady())
             {
                 comboDamage += (float) _player.GetSpellDamage(target, SpellSlot.Q);
+                abilityFlag = true;
             }
             if (W.IsReady())
             {
                 comboDamage += (float) _player.GetSpellDamage(target, SpellSlot.W);
+                abilityFlag = true;
             }
             if (E.IsReady())
             {
                 comboDamage += (float) _player.GetSpellDamage(target, SpellSlot.E);
+                abilityFlag = true;
             }
             if (R.IsReady())
             {
                 comboDamage += (float) _player.GetSpellDamage(target, SpellSlot.R);
+                abilityFlag = true;
+            }
+            if (abilityFlag)
+            {
+                comboDamage += (float) (_player.BaseAttackDamage*.75) + (float) (_player.FlatMagicDamageMod*.50);
             }
             return comboDamage;
         }
