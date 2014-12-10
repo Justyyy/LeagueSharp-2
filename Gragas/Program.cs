@@ -324,7 +324,7 @@ namespace Gragas
 
 
 
-            if (useQ)
+            if (useQ && Q.IsReady())
             {
                 var t = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Magical);
                 if (Q.IsReady() && _qObject == null && t.IsValidTarget(Q.Range))
@@ -343,7 +343,7 @@ namespace Gragas
                     }
                 }
             }
-            if (useW)
+            if (useW && W.IsReady())
             {
                 if (W.IsReady())
                 {
@@ -351,7 +351,7 @@ namespace Gragas
                 }
             }
 
-            if (useE)
+            if (useE && W.IsReady())
             {
                 var t = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Magical);
                 if (E.IsReady() && t.IsValidTarget(E.Range))
@@ -361,10 +361,10 @@ namespace Gragas
                 }
                 //
             }
-            
-            
-            
-            if (useR)
+
+
+
+            if (useR && R.IsReady())
             {
                 var t = SimpleTs.GetTarget(R.Range, SimpleTs.DamageType.Magical);
                 if (R.IsReady() && t.IsValidTarget(R.Range))
