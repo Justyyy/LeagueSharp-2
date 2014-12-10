@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
@@ -134,22 +136,30 @@ namespace Gragas
         {
             var useQ = Config.Item("UseQHarass").GetValue<bool>();
 
-            if (!useQ) return;
-            var t = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Magical);
-            //Console.WriteLine(t.ToString());
-            if (Q.IsReady() && _qObject == null && t.IsValidTarget(Q.Range))
+            if (useQ)
             {
-                if (Q.Cast(t, true) == Spell.CastStates.SuccessfullyCasted)
+                var t = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Magical);
+                //Console.WriteLine(t.ToString());
+                if (Q.IsReady() && _qObject == null && t.IsValidTarget(Q.Range))
                 {
-                    _qObject = new GameObject();
+                    if (Q.Cast(t, true) == Spell.CastStates.SuccessfullyCasted)
+                    {
+                        _qObject = new GameObject();
+                    }
                 }
-            }
-            if (_qObject == null || !_qObject.IsValid) return;
-            if (!((Game.Time - QObjectMaxDamageTime) >= 0)) return;
-            if (!(t.Distance(_qObject.Position) < Q2.Range)) return;
-            if (Q.Cast())
-            {
-                _qObject = null;
+                if (_qObject != null && _qObject.IsValid)
+                {
+                    if ((Game.Time - QObjectMaxDamageTime) >= 0)
+                    {
+                        if (t.Distance(_qObject.Position) < Q2.Range)
+                        {
+                            if (Q.Cast())
+                            {
+                                _qObject = null;
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -194,18 +204,20 @@ namespace Gragas
                 {
                     Q.Cast(bLocation.Position.To3D());
                 }
-                if (!barrelRoll) return;
-                var minionsHit =
-                    allMinions.Count(
-                        minion =>
-                            Vector3.Distance(bLocation.Position.To3D(), minion.ServerPosition) <= Q.Width &&
-                            Q.GetDamage(minion) > minion.Health);
-                if (minionsHit >= 3)
+                if (barrelRoll)
                 {
-                    Q.Cast();
+                    var minionsHit =
+                        allMinions.Count(
+                            minion =>
+                                Vector3.Distance(bLocation.Position.To3D(), minion.ServerPosition) <= Q.Width &&
+                                Q.GetDamage(minion) > minion.Health);
+                    if (minionsHit >= 3)
+                    {
+                        Q.Cast();
+                    }
                 }
             }
-            else if (useE && E.IsReady())
+            if (useE && E.IsReady())
             {
                 rangedLocation = Q.GetCircularFarmLocation(rangedMinions);
                 location = Q.GetCircularFarmLocation(allMinions);
@@ -217,7 +229,7 @@ namespace Gragas
                     E.Cast(bLocation.Position.To3D());
                 }
             }
-            else if (useW && W.IsReady())
+            if (useW && W.IsReady())
             {
                 W.Cast();
             }
@@ -269,15 +281,21 @@ namespace Gragas
                     }
 
                 }
-                if (_qObject == null) return;
-                if (!((Game.Time - QObjectMaxDamageTime) >= 0)) return;
-                if (!(t.Distance(_qObject.Position) < Q2.Range)) return;
-                if (Q.Cast())
+                if (_qObject != null)
                 {
-                    _qObject = null;
+                    if ((Game.Time - QObjectMaxDamageTime) >= 0)
+                    {
+                        if (t.Distance(_qObject.Position) < Q2.Range)
+                        {
+                            if (Q.Cast())
+                            {
+                                _qObject = null;
+                            }
+                        }
+                    }
                 }
             }
-            if (useW)
+            else if (useW)
             {
                 var t = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Magical);
                 //Console.WriteLine(t.ToString()); 
@@ -285,41 +303,42 @@ namespace Gragas
                 {
                     W.Cast();
                 }
-                foreach (var buffs in _player.Buffs)
-                {
-                    Game.PrintChat(buffs.DisplayName);
-                }
-                
             }
 
-            if (useE)
+            else if (useE)
             {
                 var t = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Magical);
                 //Console.WriteLine(t.ToString()); 
-                if (!E.IsReady() || !t.IsValidTarget(E.Range)) return;
-                var pred = Prediction.GetPrediction(t, E.Delay, E.Width / 2, E.Speed);
-                E.Cast(pred.CastPosition);
+                if (E.IsReady() && t.IsValidTarget(E.Range))
+                {
+                    var pred = Prediction.GetPrediction(t, E.Delay, E.Width / 2, E.Speed);
+                    E.Cast(pred.CastPosition);
+                }
                 //
             }
             
             
             
-            if (useR)
+            else if (useR)
             {
                 var t = SimpleTs.GetTarget(R.Range, SimpleTs.DamageType.Magical);
-                Console.WriteLine(t.ToString()); 
-                if (!R.IsReady() || !t.IsValidTarget(R.Range)) return;
-                if (!R.IsKillable(t)) return;
-                if (!RKillStealIsTargetInQ(t))
+                //Console.WriteLine(t.ToString()); 
+                if (R.IsReady() && t.IsValidTarget(R.Range))
                 {
-                    var pred = Prediction.GetPrediction(t, R.Delay, R.Width/2, R.Speed);
-                    R.Cast(pred.CastPosition);
-                }
-                else
-                {
-                    if (Q.IsKillable(t))
+                    if (R.IsKillable(t))
                     {
-                        Q.Cast();
+                        if (!RKillStealIsTargetInQ(t))
+                        {
+                            var pred = Prediction.GetPrediction(t, R.Delay, R.Width/2, R.Speed);
+                            R.Cast(pred.CastPosition);
+                        }
+                        else
+                        {
+                            if (Q.IsKillable(t))
+                            {
+                                Q.Cast();
+                            }
+                        }
                     }
                 }
                 //var pred = Prediction.GetPrediction(t, R.Delay, R.Width/2, R.Speed);
@@ -330,9 +349,11 @@ namespace Gragas
         {
             var t = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Magical);
             //Console.WriteLine(t.ToString());
-            if (!Q.IsReady() || _qObject != null || !t.IsValidTarget(Q.Range)) return;
-            Q.Cast(t, false, true);
-            _qObject = new GameObject();
+            if (Q.IsReady() && _qObject == null && t.IsValidTarget(Q.Range))
+            {
+                Q.Cast(t, false, true);
+                _qObject = new GameObject();
+            }
         }
 
         private static void ComboQ2()
