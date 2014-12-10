@@ -154,6 +154,7 @@ namespace Gragas
                 //Game.PrintChat("laneclear");
                 LaneClear();
             }
+            Game.PrintChat(_qObject.ToString());
             //if (_qObject != null)
             //{
             //    Game.PrintChat("Can Cast Q2");
