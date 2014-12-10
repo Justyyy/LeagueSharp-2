@@ -107,7 +107,7 @@ namespace Gragas
             _player = ObjectManager.Player;
             if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
             {
-                //Game.PrintChat("combo");
+                Game.PrintChat("combo");
                 Combo();
             }
             if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed)
