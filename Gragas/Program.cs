@@ -107,7 +107,7 @@ namespace Gragas
             _player = ObjectManager.Player;
             if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
             {
-                Game.PrintChat("combo");
+                //Game.PrintChat("combo");
                 Combo();
             }
             if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed)
@@ -277,7 +277,7 @@ namespace Gragas
                     _qObject = null;
                 }
             }
-            else if (useW)
+            if (useW)
             {
                 var t = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Magical);
                 //Console.WriteLine(t.ToString()); 
@@ -292,7 +292,7 @@ namespace Gragas
                 
             }
 
-            else if (useE)
+            if (useE)
             {
                 var t = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Magical);
                 //Console.WriteLine(t.ToString()); 
@@ -304,7 +304,7 @@ namespace Gragas
             
             
             
-            else if (useR)
+            if (useR)
             {
                 var t = SimpleTs.GetTarget(R.Range, SimpleTs.DamageType.Magical);
                 //Console.WriteLine(t.ToString()); 
