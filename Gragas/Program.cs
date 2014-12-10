@@ -364,7 +364,7 @@ namespace Gragas
 
             if (useE)
             {
-                Game.PrintChat("W is true");
+                Game.PrintChat("E is true");
                 var t = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Magical);
                 //Console.WriteLine(t.ToString()); 
                 if (E.IsReady() && t.IsValidTarget(E.Range))
@@ -379,7 +379,7 @@ namespace Gragas
             
             if (useR)
             {
-                Game.PrintChat("W is true");
+                Game.PrintChat("R is true");
                 var t = SimpleTs.GetTarget(R.Range, SimpleTs.DamageType.Magical);
                 //Console.WriteLine(t.ToString()); 
                 if (R.IsReady() && t.IsValidTarget(R.Range))
