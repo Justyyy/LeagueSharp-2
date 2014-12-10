@@ -1,6 +1,0 @@
-﻿namespace Gragas
-{
-    class GragDamage
-    {
-    }
-}

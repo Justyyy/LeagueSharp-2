@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
+using Color = System.Drawing.Color;
 
 namespace Gragas
 {
@@ -82,6 +83,37 @@ namespace Gragas
                 .AddItem(new MenuItem("UseEAntiGapcloser", "E on Gapclose (Incomplete)").SetValue(true));
             Config.SubMenu("Misc")
                 .AddItem(new MenuItem("UseRAntiGapcloser", "R on Gapclose (Incomplete)").SetValue(true));
+            var drawMenu = new Menu("Drawing", "Drawing");
+            {
+                drawMenu.AddItem(new MenuItem("Draw_Disabled", "Disable All").SetValue(false));
+                drawMenu.AddItem(new MenuItem("Draw_Q", "Draw Q").SetValue(true));
+                drawMenu.AddItem(new MenuItem("Draw_W", "Draw W").SetValue(true));
+                drawMenu.AddItem(new MenuItem("Draw_E", "Draw E").SetValue(true));
+                drawMenu.AddItem(new MenuItem("Draw_R", "Draw R").SetValue(true));
+                drawMenu.AddItem(new MenuItem("Draw_R_Killable", "Draw R Mark on Killable").SetValue(true));
+
+                MenuItem drawComboDamageMenu = new MenuItem("Draw_ComboDamage", "Draw Combo Damage").SetValue(true);
+                MenuItem drawFill = new MenuItem("Draw_Fill", "Draw Combo Damage Fill").SetValue(new Circle(true, Color.FromArgb(90, 255, 169, 4)));
+                drawMenu.AddItem(drawComboDamageMenu);
+                drawMenu.AddItem(drawFill);
+                DamageIndicator.DamageToUnit = GetComboDamage;
+                DamageIndicator.Enabled = drawComboDamageMenu.GetValue<bool>();
+                DamageIndicator.Fill = drawFill.GetValue<Circle>().Active;
+                DamageIndicator.FillColor = drawFill.GetValue<Circle>().Color;
+                drawComboDamageMenu.ValueChanged +=
+                    delegate(object sender, OnValueChangeEventArgs eventArgs)
+                    {
+                        DamageIndicator.Enabled = eventArgs.GetNewValue<bool>();
+                    };
+                drawFill.ValueChanged +=
+                    delegate(object sender, OnValueChangeEventArgs eventArgs)
+                    {
+                        DamageIndicator.Fill = eventArgs.GetNewValue<Circle>().Active;
+                        DamageIndicator.FillColor = eventArgs.GetNewValue<Circle>().Color;
+                    };
+
+                Config.AddSubMenu(drawMenu);
+            }
 
             AntiGapcloser.OnEnemyGapcloser += OnEnemyGapcloser;
 
@@ -161,6 +193,29 @@ namespace Gragas
                     }
                 }
             }
+        }
+
+        public static float GetComboDamage(Obj_AI_Base target)
+        {
+            float comboDamage = 0;
+
+            if (Q.IsReady())
+            {
+                comboDamage += (float) _player.GetSpellDamage(target, SpellSlot.Q);
+            }
+            if (W.IsReady())
+            {
+                comboDamage += (float) _player.GetSpellDamage(target, SpellSlot.W);
+            }
+            if (E.IsReady())
+            {
+                comboDamage += (float) _player.GetSpellDamage(target, SpellSlot.E);
+            }
+            if (R.IsReady())
+            {
+                comboDamage += (float) _player.GetSpellDamage(target, SpellSlot.R);
+            }
+            return comboDamage;
         }
 
 /*
