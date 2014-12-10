@@ -190,6 +190,16 @@ namespace Gragas
         {
             float comboDamage = 0;
             bool abilityFlag = false;
+            bool hasLichBane = false;
+            foreach (var item in _player.InventoryItems)
+            {
+                if (item.DisplayName == "Lich Bane")
+                {
+                    hasLichBane = true;
+                    break;
+                }
+                
+            }
             if (Q.IsReady())
             {
                 comboDamage += (float) _player.GetSpellDamage(target, SpellSlot.Q);
@@ -210,7 +220,7 @@ namespace Gragas
                 comboDamage += (float) _player.GetSpellDamage(target, SpellSlot.R);
                 abilityFlag = true;
             }
-            if (abilityFlag)
+            if (hasLichBane && abilityFlag)
             {
                 comboDamage += (float) (_player.BaseAttackDamage*.75) + (float) (_player.FlatMagicDamageMod*.50);
             }
