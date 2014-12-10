@@ -290,24 +290,30 @@ namespace Gragas
             }
         }
 
+        
+
         private static void OnCreateObject(GameObject sender, EventArgs args)
         {
-            if (!sender.Name.Contains("Gragas") || !sender.Name.Contains("Q_Ally")) return;
+            if (sender.Name.Contains("Gragas") && sender.Name.Contains("Q_Ally"))
+            {
+                _qObject = sender;
+                _qObjectCreateTime = Game.Time;
+                QObjectMaxDamageTime = _qObjectCreateTime + 2;
+                CanUseQLaunch = false;
+            }
             //Game.PrintChat(sender.Name);
             //Game.PrintChat("Gragas Q is out!");
-            _qObject = sender;
-            _qObjectCreateTime = Game.Time;
-            QObjectMaxDamageTime = _qObjectCreateTime + 2;
-            CanUseQLaunch = false;
         }
 
         private static void OnDeleteObject(GameObject sender, EventArgs args)
         {
-            if (!sender.Name.Contains("Gragas") || !sender.Name.Contains("Q_Ally")) return;
+            if (sender.Name.Contains("Gragas") && sender.Name.Contains("Q_Ally"))
+            {
+                _qObject = null;
+                CanUseQLaunch = true;
+            }
             //Game.PrintChat(sender.Name);
             //Game.PrintChat("Gragas Q exploded!");
-            _qObject = null;
-            CanUseQLaunch = true;
         }
 
         private static void OnEnemyGapcloser(ActiveGapcloser gapcloser)
@@ -330,11 +336,8 @@ namespace Gragas
                 //Console.WriteLine(t.ToString());
                 if (Q.IsReady() && _qObject == null && t.IsValidTarget(Q.Range))
                 {
-                    if (Q.Cast(t, true) == Spell.CastStates.SuccessfullyCasted)
-                    {
-                        _qObject = new GameObject();
-                    }
-
+                    PredictionOutput pred = Q.GetPrediction(t, true);
+                    Q.Cast(pred.CastPosition, true);
                 }
                 if (_qObject != null)
                 {
@@ -342,15 +345,12 @@ namespace Gragas
                     {
                         if (t.Distance(_qObject.Position) < Q2.Range)
                         {
-                            if (Q.Cast())
-                            {
-                                _qObject = null;
-                            }
+                            Q.Cast();
                         }
                     }
                 }
             }
-            else if (useW)
+            if (useW)
             {
                 var t = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Magical);
                 //Console.WriteLine(t.ToString()); 
@@ -360,7 +360,7 @@ namespace Gragas
                 }
             }
 
-            else if (useE)
+            if (useE)
             {
                 var t = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Magical);
                 //Console.WriteLine(t.ToString()); 
@@ -374,7 +374,7 @@ namespace Gragas
             
             
             
-            else if (useR)
+            if (useR)
             {
                 var t = SimpleTs.GetTarget(R.Range, SimpleTs.DamageType.Magical);
                 //Console.WriteLine(t.ToString()); 
