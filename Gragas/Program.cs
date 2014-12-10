@@ -225,11 +225,15 @@ namespace Gragas
             }
             if (hasLichBane && abilityFlag)
             {
-                comboDamage += (float) (_player.BaseAttackDamage*.75) + (float) (_player.FlatMagicDamageMod*.50);
+                comboDamage += (float) _player.CalcDamage(target, Damage.DamageType.Magical, _player.BaseAttackDamage*.75) + (float) (_player.FlatMagicDamageMod*.50);
             }
             else if (hasIceborn && abilityFlag)
             {
-                comboDamage += (float) (_player.BaseAttackDamage*1.25);
+                comboDamage += (float) _player.CalcDamage(target, Damage.DamageType.Physical, (_player.BaseAttackDamage*1.25));
+            }
+            else if (hasSheen && abilityFlag)
+            {
+                comboDamage += (float) _player.CalcDamage(target, Damage.DamageType.Physical, (_player.BaseAttackDamage * 1));
             }
             return comboDamage;
         }
