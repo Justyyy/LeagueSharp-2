@@ -162,24 +162,18 @@ namespace Gragas
             if (useQ)
             {
                 var t = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Magical);
-                //Console.WriteLine(t.ToString());
                 if (Q.IsReady() && _qObject == null && t.IsValidTarget(Q.Range))
                 {
-                    if (Q.Cast(t, true) == Spell.CastStates.SuccessfullyCasted)
-                    {
-                        _qObject = new GameObject();
-                    }
+                    PredictionOutput pred = Q.GetPrediction(t, true);
+                    Q.Cast(pred.CastPosition, true);
                 }
-                if (_qObject != null && _qObject.IsValid)
+                if (_qObject != null)
                 {
                     if ((Game.Time - QObjectMaxDamageTime) >= 0)
                     {
                         if (t.Distance(_qObject.Position) < Q2.Range)
                         {
-                            if (Q.Cast())
-                            {
-                                _qObject = null;
-                            }
+                            Q.Cast();
                         }
                     }
                 }
@@ -189,17 +183,8 @@ namespace Gragas
         public static float GetComboDamage(Obj_AI_Base target)
         {
             float comboDamage = 0;
-            bool abilityFlag = false;
-            bool hasLichBane = false;
-            foreach (var item in _player.InventoryItems)
-            {
-                if (item.DisplayName == "Lich Bane")
-                {
-                    hasLichBane = true;
-                    break;
-                }
-                
-            }
+            var abilityFlag = false;
+            var hasLichBane = _player.InventoryItems.Any(item => item.DisplayName == "Lich Bane");
             if (Q.IsReady())
             {
                 comboDamage += (float) _player.GetSpellDamage(target, SpellSlot.Q);
