@@ -184,7 +184,25 @@ namespace Gragas
         {
             float comboDamage = 0;
             var abilityFlag = false;
-            var hasLichBane = _player.InventoryItems.Any(item => item.DisplayName == "Lich Bane");
+            bool hasSheen = false;
+            bool hasIceborn = false;
+            bool hasLichBane = false;
+            if (_player.InventoryItems.Any(item => item.DisplayName == "Sheen"))
+            {
+                hasSheen = true;
+            }
+            if (_player.InventoryItems.Any(item => item.DisplayName == "Iceborn Gauntlet"))
+            {
+                hasSheen = false;
+                hasIceborn = true;
+            }
+            if (_player.InventoryItems.Any(item => item.DisplayName == "Lich Bane"))
+            {
+                hasSheen = false;
+                hasIceborn = false;
+                hasLichBane = true;
+            }
+            
             if (Q.IsReady())
             {
                 comboDamage += (float) _player.GetSpellDamage(target, SpellSlot.Q);
@@ -208,6 +226,10 @@ namespace Gragas
             if (hasLichBane && abilityFlag)
             {
                 comboDamage += (float) (_player.BaseAttackDamage*.75) + (float) (_player.FlatMagicDamageMod*.50);
+            }
+            else if (hasIceborn && abilityFlag)
+            {
+                comboDamage += (float) (_player.BaseAttackDamage*1.25);
             }
             return comboDamage;
         }
