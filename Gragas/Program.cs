@@ -287,7 +287,7 @@ namespace Gragas
                 }
                 foreach (var buffs in _player.Buffs)
                 {
-                    Console.WriteLine(buffs.Name);
+                    Game.PrintChat(buffs.DisplayName);
                 }
                 
             }
@@ -307,7 +307,7 @@ namespace Gragas
             if (useR)
             {
                 var t = SimpleTs.GetTarget(R.Range, SimpleTs.DamageType.Magical);
-                //Console.WriteLine(t.ToString()); 
+                Console.WriteLine(t.ToString()); 
                 if (!R.IsReady() || !t.IsValidTarget(R.Range)) return;
                 if (!R.IsKillable(t)) return;
                 if (!RKillStealIsTargetInQ(t))
