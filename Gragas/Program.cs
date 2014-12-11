@@ -152,7 +152,6 @@ namespace Gragas
             {
                 LaneClear();
             }
-            Game.PrintChat(_qObject.ToString());
         }
 
         private static void Harass()
