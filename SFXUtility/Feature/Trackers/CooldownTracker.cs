@@ -20,23 +20,25 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using LeagueSharp;
+using LeagueSharp.Common;
+using SFXUtility.Class;
+using SFXUtility.IoCContainer;
+using SFXUtility.Properties;
+using SharpDX;
+using Color = SharpDX.Color;
+using Rectangle = SharpDX.Rectangle;
+using Utilities = SFXUtility.Class.Utilities;
+
 namespace SFXUtility.Feature
 {
     #region
 
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Linq;
-    using Class;
-    using IoCContainer;
-    using LeagueSharp;
-    using LeagueSharp.Common;
-    using Properties;
-    using SharpDX;
-    using Color = SharpDX.Color;
-    using Rectangle = SharpDX.Rectangle;
-    using Utilities = Class.Utilities;
+    
 
     #endregion
 
@@ -152,7 +154,7 @@ namespace SFXUtility.Feature
                     _trackers.Menu.AddSubMenu(Menu);
 
                     foreach (
-                        Obj_AI_Hero hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValid && !hero.IsMe))
+                        var hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsValid && !hero.IsMe))
                     {
                         try
                         {
@@ -193,8 +195,8 @@ namespace SFXUtility.Feature
             private readonly SpellSlot[] _spellSlots = {SpellSlot.Q, SpellSlot.W, SpellSlot.E, SpellSlot.R};
             private readonly List<Render.Text> _spellTexts = new List<Render.Text>();
 
-           // private readonly SpellSlot[] _summonerSpellSlots = {SpellSlot.Q, SpellSlot.W};
-             private readonly SpellSlot[] _summonerSpellSlots = { ((SpellSlot) 4), ((SpellSlot) 5) };
+            // private readonly SpellSlot[] _summonerSpellSlots = {SpellSlot.Q, SpellSlot.W};
+            private readonly SpellSlot[] _summonerSpellSlots = {((SpellSlot) 4), ((SpellSlot) 5)};
             private readonly List<Render.Text> _summonerSpellTexts = new List<Render.Text>();
             private readonly List<Render.Sprite> _summonerSprites = new List<Render.Sprite>();
 
@@ -237,14 +239,14 @@ namespace SFXUtility.Feature
                         }
                     };
 
-             //  Game.PrintChat(_summonerSpellSlots.Length.ToString());
-                for (int i = 0; i < _summonerSpellSlots.Length; i++) 
+                //  Game.PrintChat(_summonerSpellSlots.Length.ToString());
+                for (var i = 0; i < _summonerSpellSlots.Length; i++)
                 {
-              // foreach (var sSlot in _summonerSpellSlots) {
-                   //for (int i = 0; i < _summonerSpellSlots.Length; i++) 
+                    // foreach (var sSlot in _summonerSpellSlots) {
+                    //for (int i = 0; i < _summonerSpellSlots.Length; i++) 
                     var index = i;
                     var spell = Hero.Spellbook.GetSpell(_summonerSpellSlots[index]);
-                   // Game.PrintChat(spell.Name);
+                    // Game.PrintChat(spell.Name);
                     var summoner = Resources.ResourceManager.GetObject(string.Format("CD_{0}", spell.Name.ToLower())) ??
                                    Resources.CD_summonerbarrier;
                     var sprite = new Render.Sprite((Bitmap) summoner, default(Vector2))
@@ -332,7 +334,7 @@ namespace SFXUtility.Feature
                     _summonerSpellTexts.Add(text);
                 }
 
-                for (int i = 0; i < _spellSlots.Length; i++)
+                for (var i = 0; i < _spellSlots.Length; i++)
                 {
                     var index = i;
                     var spell = Hero.Spellbook.GetSpell(_spellSlots[index]);
