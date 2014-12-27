@@ -79,7 +79,7 @@ namespace RivenSharp
             Config.AddSubMenu(orbwalkerMenu);
            //TS
            var TargetSelectorMenu = new Menu("Target Selector", "Target Selector");
-           SimpleTs.AddToMenu(TargetSelectorMenu);
+           TargetSelector.AddToMenu(TargetSelectorMenu);
            Config.AddSubMenu(TargetSelectorMenu);
             //Combo
             Config.AddSubMenu(new Menu("Combo Sharp", "combo"));
@@ -153,12 +153,12 @@ namespace RivenSharp
 
                 if (Config.Item("doHarasE").GetValue<KeyBind>().Active)
                 {
-                    Obj_AI_Hero target = SimpleTs.GetTarget(1400, SimpleTs.DamageType.Physical);
+                    Obj_AI_Hero target = TargetSelector.GetTarget(1400, TargetSelector.DamageType.Physical);
                     LXOrbwalker.ForcedTarget = target;
                     Riven.doHarasE(target);
                 }else if (Config.Item("doHarasQ").GetValue<KeyBind>().Active)
                 {
-                    Obj_AI_Hero target = SimpleTs.GetTarget(1400, SimpleTs.DamageType.Physical);
+                    Obj_AI_Hero target = TargetSelector.GetTarget(1400, TargetSelector.DamageType.Physical);
                     LXOrbwalker.ForcedTarget = target;
                     Riven.doHarasQ(target);
                 }
@@ -166,7 +166,7 @@ namespace RivenSharp
 
                 if (LXOrbwalker.CurrentMode == LXOrbwalker.Mode.Combo)
                 {
-                     Obj_AI_Hero target = SimpleTs.GetTarget(1400, SimpleTs.DamageType.Physical);
+                    Obj_AI_Hero target = TargetSelector.GetTarget(1400, TargetSelector.DamageType.Physical);
                      LXOrbwalker.ForcedTarget = target;
                      Riven.doCombo(target);
                      //Console.WriteLine(target.NetworkId);
