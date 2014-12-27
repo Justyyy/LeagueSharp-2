@@ -84,6 +84,8 @@ namespace Gragas
                 .AddItem(new MenuItem("UseEAntiGapcloser", "E on Gapclose (Incomplete)").SetValue(true));
             Config.SubMenu("Misc")
                 .AddItem(new MenuItem("UseRAntiGapcloser", "R on Gapclose (Incomplete)").SetValue(true));
+            Config.SubMenu("Misc")
+                .AddItem(new MenuItem("UsePackets", "Use Packets").SetValue(false));
             var drawMenu = new Menu("Drawing", "Drawing");
             {
                 drawMenu.AddItem(new MenuItem("Draw_Disabled", "Disable All").SetValue(false));
@@ -164,7 +166,7 @@ namespace Gragas
                 if (Q.IsReady() && _qObject == null && t.IsValidTarget(Q.Range))
                 {
                     PredictionOutput pred = Q.GetPrediction(t, true);
-                    Q.Cast(pred.CastPosition, true);
+                    Q.Cast(pred.CastPosition, Config.Item("UsePackets").GetValue<bool>());
                 }
                 if (_qObject != null)
                 {
@@ -340,7 +342,7 @@ namespace Gragas
                 if (Q.IsReady() && _qObject == null && t.IsValidTarget(Q.Range))
                 {
                     PredictionOutput pred = Q.GetPrediction(t, true);
-                    Q.Cast(pred.CastPosition, true);
+                    Q.Cast(pred.CastPosition, Config.Item("UsePackets").GetValue<bool>());
                 }
                 if (_qObject != null)
                 {
@@ -403,7 +405,7 @@ namespace Gragas
             var t = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Magical);
             if (Q.IsReady() && _qObject == null && t.IsValidTarget(Q.Range))
             {
-                Q.Cast(t, false, true);
+                Q.Cast(t, false, Config.Item("UsePackets").GetValue<bool>());
                 _qObject = new GameObject();
             }
         }
@@ -432,7 +434,7 @@ namespace Gragas
             var t = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Magical);
             if (E.IsReady() && t.IsValidTarget(E.Range))
             {
-                E.Cast(t, false, true);
+                E.Cast(t, false, Config.Item("UsePackets").GetValue<bool>());
             }
         }
 
@@ -442,7 +444,7 @@ namespace Gragas
             Game.PrintChat(R.GetDamage(t, 1).ToString(CultureInfo.InvariantCulture));
             if (R.IsReady() && t.IsValidTarget(R.Range) && R.IsKillable(t))
             {
-                R.Cast(t, false, true);
+                R.Cast(t, false, Config.Item("UsePackets").GetValue<bool>());
             }
         }
 
