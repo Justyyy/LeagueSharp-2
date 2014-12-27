@@ -7,7 +7,7 @@ using Color = System.Drawing.Color;
 
 namespace JayceTheTwerker
 {
-    class Program
+    internal class Program
     {
         public const string ChampionName = "Jayce";
         public static Orbwalking.Orbwalker Orbwalker;
@@ -25,24 +25,25 @@ namespace JayceTheTwerker
         public static Spell R;
 
         //status
-        public static bool HammerTime = false;
+        public static bool HammerTime;
         public static SpellDataInst qdata;
         public static Vector3 ePos;
-        public static bool firstE = false;
+        public static bool firstE;
 
         //CoolDowns
-        private static float[] CannonQcd = { 8, 8, 8, 8, 8 };
-        private static float[] CannonWcd = { 14, 12, 10, 8, 6 };
-        private static float[] CannonEcd = { 16, 16, 16, 16, 16 };
+        private static readonly float[] CannonQcd = {8, 8, 8, 8, 8};
+        private static readonly float[] CannonWcd = {14, 12, 10, 8, 6};
+        private static readonly float[] CannonEcd = {16, 16, 16, 16, 16};
 
-        private static float[] HammerQcd = { 16, 14, 12, 10, 8 };
-        private static float[] HammerWcd = { 10, 10, 10, 10, 10 };
-        private static float[] HammerEcd = { 14, 13, 12, 11, 10 };
+        private static readonly float[] HammerQcd = {16, 14, 12, 10, 8};
+        private static readonly float[] HammerWcd = {10, 10, 10, 10, 10};
+        private static readonly float[] HammerEcd = {14, 13, 12, 11, 10};
 
         //Menu
         public static Menu menu;
 
         private static Obj_AI_Hero Player;
+
         private static void Main(string[] args)
         {
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
@@ -98,22 +99,35 @@ namespace JayceTheTwerker
 
             //Keys
             menu.AddSubMenu(new Menu("Keys", "Keys"));
-            menu.SubMenu("Keys").AddItem(new MenuItem("ComboActive", "Combo!").SetValue(new KeyBind(menu.Item("Combo_Key").GetValue<KeyBind>().Key, KeyBindType.Press)));
-            menu.SubMenu("Keys").AddItem(new MenuItem("HarassActive", "Harass!").SetValue(new KeyBind(menu.Item("LaneClear_Key").GetValue<KeyBind>().Key, KeyBindType.Press)));
-            menu.SubMenu("Keys").AddItem(new MenuItem("HarassActiveT", "Harass (toggle)!").SetValue(new KeyBind("Y".ToCharArray()[0], KeyBindType.Toggle)));
-            menu.SubMenu("Keys").AddItem(new MenuItem("shootMouse", "Shoot QE Mouse").SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press)));
+            menu.SubMenu("Keys")
+                .AddItem(
+                    new MenuItem("ComboActive", "Combo!").SetValue(
+                        new KeyBind(menu.Item("Combo_Key").GetValue<KeyBind>().Key, KeyBindType.Press)));
+            menu.SubMenu("Keys")
+                .AddItem(
+                    new MenuItem("HarassActive", "Harass!").SetValue(
+                        new KeyBind(menu.Item("LaneClear_Key").GetValue<KeyBind>().Key, KeyBindType.Press)));
+            menu.SubMenu("Keys")
+                .AddItem(
+                    new MenuItem("HarassActiveT", "Harass (toggle)!").SetValue(new KeyBind("Y".ToCharArray()[0],
+                        KeyBindType.Toggle)));
+            menu.SubMenu("Keys")
+                .AddItem(
+                    new MenuItem("shootMouse", "Shoot QE Mouse").SetValue(new KeyBind("T".ToCharArray()[0],
+                        KeyBindType.Press)));
 
             //Combo menu:
             menu.AddSubMenu(new Menu("Combo", "Combo"));
             menu.SubMenu("Combo").AddItem(new MenuItem("UseQCombo", "Use Cannon Q").SetValue(true));
-            menu.SubMenu("Combo").AddItem(new MenuItem("qSpeed", "Charge Q Proj Speed").SetValue(new Slider(1600, 400, 2500)));
+            menu.SubMenu("Combo")
+                .AddItem(new MenuItem("qSpeed", "Charge Q Proj Speed").SetValue(new Slider(1600, 400, 2500)));
             menu.SubMenu("Combo").AddItem(new MenuItem("UseWCombo", "Use Cannon W").SetValue(true));
             menu.SubMenu("Combo").AddItem(new MenuItem("UseECombo", "Use Cannon E").SetValue(true));
             menu.SubMenu("Combo").AddItem(new MenuItem("UseQComboHam", "Use Hammer Q").SetValue(true));
             menu.SubMenu("Combo").AddItem(new MenuItem("UseWComboHam", "Use Hammer W").SetValue(true));
             menu.SubMenu("Combo").AddItem(new MenuItem("UseEComboHam", "Use Hammer E").SetValue(true));
             menu.SubMenu("Combo").AddItem(new MenuItem("UseRCombo", "Use R to Switch").SetValue(true));
-            
+
             //Harass menu:
             menu.AddSubMenu(new Menu("Harass", "Harass"));
             menu.SubMenu("Harass").AddItem(new MenuItem("UseQHarass", "Use Q").SetValue(true));
@@ -141,10 +155,11 @@ namespace JayceTheTwerker
             var dmgAfterComboItem = new MenuItem("DamageAfterCombo", "Draw damage after combo").SetValue(true);
             Utility.HpBarDamageIndicator.DamageToUnit = GetComboDamage;
             Utility.HpBarDamageIndicator.Enabled = dmgAfterComboItem.GetValue<bool>();
-            dmgAfterComboItem.ValueChanged += delegate(object sender, OnValueChangeEventArgs eventArgs)
-            {
-                Utility.HpBarDamageIndicator.Enabled = eventArgs.GetNewValue<bool>();
-            };
+            dmgAfterComboItem.ValueChanged +=
+                delegate(object sender, OnValueChangeEventArgs eventArgs)
+                {
+                    Utility.HpBarDamageIndicator.Enabled = eventArgs.GetNewValue<bool>();
+                };
 
             //Drawings menu:
             menu.AddSubMenu(new Menu("Drawings", "Drawings"));
@@ -171,7 +186,8 @@ namespace JayceTheTwerker
             Orbwalking.AfterAttack += Orbwalking_AfterAttack;
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
-            Game.PrintChat(Player.ChampionName + " Loaded by --- xSalice, If you like my Assemblies, please feel free to donate to keep me motivated! :D");
+            Game.PrintChat(Player.ChampionName +
+                           " Loaded by --- xSalice, If you like my Assemblies, please feel free to donate to keep me motivated! :D");
         }
 
         private static void Orbwalking_AfterAttack(AttackableUnit unit, AttackableUnit target)
@@ -184,7 +200,7 @@ namespace JayceTheTwerker
             var damage = 0d;
 
             if (canQcd == 0 && canEcd == 0 && Q.Level > 0 && E.Level > 0)
-                damage += Player.GetSpellDamage(enemy, SpellSlot.Q) * 1.4;
+                damage += Player.GetSpellDamage(enemy, SpellSlot.Q)*1.4;
             else if (canQcd == 0 && Q.Level > 0)
                 damage += Player.GetSpellDamage(enemy, SpellSlot.Q);
 
@@ -197,24 +213,27 @@ namespace JayceTheTwerker
             if (hamEcd == 0 && E.Level > 0)
                 damage += Player.GetSpellDamage(enemy, SpellSlot.E);
 
-            return (float)damage;
+            return (float) damage;
         }
 
         private static void Combo()
         {
             UseSpells(menu.Item("UseQCombo").GetValue<bool>(), menu.Item("UseWCombo").GetValue<bool>(),
-                menu.Item("UseECombo").GetValue<bool>(), menu.Item("UseQComboHam").GetValue<bool>(), menu.Item("UseWComboHam").GetValue<bool>(),
+                menu.Item("UseECombo").GetValue<bool>(), menu.Item("UseQComboHam").GetValue<bool>(),
+                menu.Item("UseWComboHam").GetValue<bool>(),
                 menu.Item("UseEComboHam").GetValue<bool>(), menu.Item("UseRCombo").GetValue<bool>(), "Combo");
-
         }
+
         private static void Harass()
         {
             UseSpells(menu.Item("UseQHarass").GetValue<bool>(), menu.Item("UseWHarass").GetValue<bool>(),
-                menu.Item("UseEHarass").GetValue<bool>(), menu.Item("UseQHarassHam").GetValue<bool>(), menu.Item("UseWHarassHam").GetValue<bool>(),
+                menu.Item("UseEHarass").GetValue<bool>(), menu.Item("UseQHarassHam").GetValue<bool>(),
+                menu.Item("UseWHarassHam").GetValue<bool>(),
                 menu.Item("UseEHarassHam").GetValue<bool>(), menu.Item("UseRHarass").GetValue<bool>(), "Harass");
         }
 
-        private static void UseSpells(bool useQ, bool useW, bool useE, bool useQ2, bool useW2, bool useE2, bool useR, String source)
+        private static void UseSpells(bool useQ, bool useW, bool useE, bool useQ2, bool useW2, bool useE2, bool useR,
+            String source)
         {
             var qTarget = TargetSelector.GetTarget(QCharge.Range, TargetSelector.DamageType.Physical);
             var q2Target = TargetSelector.GetTarget(Q2.Range, TargetSelector.DamageType.Physical);
@@ -227,12 +246,11 @@ namespace JayceTheTwerker
 
             //mana manager for harass
             var mana = menu.Item("manaH").GetValue<Slider>().Value;
-            var manaPercent = Player.Mana / Player.MaxMana * 100;
+            var manaPercent = Player.Mana/Player.MaxMana*100;
 
             //Main Combo
             if (source == "Combo")
             {
-                
                 if (useQ && canQcd == 0 && Player.Distance(qTarget) <= QCharge.Range && qTarget != null && !HammerTime)
                 {
                     //Game.PrintChat("Yay");
@@ -248,7 +266,8 @@ namespace JayceTheTwerker
                     if (useQ2 && Player.Distance(q2Target) <= Q2.Range + q2Target.BoundingRadius && Q2.IsReady())
                         Q2.Cast(q2Target, menu.Item("packet").GetValue<bool>());
 
-                    if (useE2 && eCheck(e2Target, useQ, useW) && Player.Distance(e2Target) <= E2.Range + q2Target.BoundingRadius && E2.IsReady())
+                    if (useE2 && eCheck(e2Target, useQ, useW) &&
+                        Player.Distance(e2Target) <= E2.Range + q2Target.BoundingRadius && E2.IsReady())
                         E2.Cast(q2Target, menu.Item("packet").GetValue<bool>());
                 }
 
@@ -258,7 +277,6 @@ namespace JayceTheTwerker
             }
             else if (source == "Harass" && manaPercent > mana)
             {
-               
                 if (useQ && canQcd == 0 && Player.Distance(qTarget) <= QCharge.Range && qTarget != null && !HammerTime)
                 {
                     castQCannon(qTarget, useE);
@@ -270,7 +288,7 @@ namespace JayceTheTwerker
                     if (useW2 && Player.Distance(q2Target) <= 300 && W.IsReady())
                         W.Cast();
 
-                    if(useQ2 && Player.Distance(q2Target) <= Q2.Range + q2Target.BoundingRadius && Q2.IsReady())
+                    if (useQ2 && Player.Distance(q2Target) <= Q2.Range + q2Target.BoundingRadius && Q2.IsReady())
                         Q2.Cast(q2Target, menu.Item("packet").GetValue<bool>());
 
                     if (useE2 && Player.Distance(q2Target) <= E2.Range + q2Target.BoundingRadius && E2.IsReady())
@@ -281,7 +299,6 @@ namespace JayceTheTwerker
                 if (useR)
                     switchFormCheck(q2Target, useQ, useW, useE, useQ2, useW2, useE2);
             }
-
         }
 
         public static bool eCheck(Obj_AI_Hero target, bool useQ, bool useW)
@@ -303,7 +320,7 @@ namespace JayceTheTwerker
             }
 
             var hp = menu.Item("autoE").GetValue<Slider>().Value;
-            var hpPercent = Player.Health / Player.MaxHealth * 100;
+            var hpPercent = Player.Health/Player.MaxHealth*100;
 
             if (hpPercent <= hp)
             {
@@ -314,10 +331,11 @@ namespace JayceTheTwerker
             return false;
         }
 
-        public static bool wallStun(Obj_AI_Hero target){
+        public static bool wallStun(Obj_AI_Hero target)
+        {
             var pred = E2.GetPrediction(target);
 
-            var PushedPos = pred.CastPosition + Vector3.Normalize(pred.CastPosition - Player.ServerPosition) * 350;
+            var PushedPos = pred.CastPosition + Vector3.Normalize(pred.CastPosition - Player.ServerPosition)*350;
 
             if (IsWall(PushedPos))
                 return true;
@@ -335,11 +353,15 @@ namespace JayceTheTwerker
         {
             foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>())
             {
-                if (enemy != null && !enemy.IsDead && enemy.IsEnemy && Player.Distance(enemy.ServerPosition) <= QCharge.Range && enemy.IsValidTarget(QCharge.Range))
+                if (enemy != null && !enemy.IsDead && enemy.IsEnemy &&
+                    Player.Distance(enemy.ServerPosition) <= QCharge.Range && enemy.IsValidTarget(QCharge.Range))
                 {
                     //Q
-                    if ((Player.GetSpellDamage(enemy, SpellSlot.Q) - 20) > enemy.Health && canQcd == 0 && Q.GetPrediction(enemy).Hitchance >= HitChance.High && Player.Distance(enemy.ServerPosition) <= Q.Range){
-                        if(HammerTime && R.IsReady())
+                    if ((Player.GetSpellDamage(enemy, SpellSlot.Q) - 20) > enemy.Health && canQcd == 0 &&
+                        Q.GetPrediction(enemy).Hitchance >= HitChance.High &&
+                        Player.Distance(enemy.ServerPosition) <= Q.Range)
+                    {
+                        if (HammerTime && R.IsReady())
                             R.Cast();
 
                         if (!HammerTime && Q.IsReady())
@@ -347,18 +369,21 @@ namespace JayceTheTwerker
                     }
 
                     //QE
-                    if ((Player.GetSpellDamage(enemy, SpellSlot.Q) * 1.4 - 20) > enemy.Health && canQcd == 0 && canEcd == 0 && Player.Distance(enemy.ServerPosition) <= QCharge.Range)
+                    if ((Player.GetSpellDamage(enemy, SpellSlot.Q)*1.4 - 20) > enemy.Health && canQcd == 0 &&
+                        canEcd == 0 && Player.Distance(enemy.ServerPosition) <= QCharge.Range)
                     {
-                        if(HammerTime && R.IsReady())
+                        if (HammerTime && R.IsReady())
                             R.Cast();
 
-                        if(!HammerTime)
+                        if (!HammerTime)
                             castQCannon(enemy, true);
                     }
 
                     //Hammer QE
-                    if ((Player.GetSpellDamage(enemy, SpellSlot.E) + Player.GetSpellDamage(enemy, SpellSlot.Q, 1) - 20) > enemy.Health
-                        && hamEcd == 0 && hamQcd == 0 && Player.Distance(enemy.ServerPosition) <= Q2.Range + enemy.BoundingRadius)
+                    if ((Player.GetSpellDamage(enemy, SpellSlot.E) + Player.GetSpellDamage(enemy, SpellSlot.Q, 1) - 20) >
+                        enemy.Health
+                        && hamEcd == 0 && hamQcd == 0 &&
+                        Player.Distance(enemy.ServerPosition) <= Q2.Range + enemy.BoundingRadius)
                     {
                         if (!HammerTime && R.IsReady())
                             R.Cast();
@@ -372,7 +397,8 @@ namespace JayceTheTwerker
                     }
 
                     //Hammer Q
-                    if ((Player.GetSpellDamage(enemy, SpellSlot.Q, 1) - 20) > enemy.Health && hamQcd == 0 && Player.Distance(enemy.ServerPosition) <= Q2.Range + enemy.BoundingRadius)
+                    if ((Player.GetSpellDamage(enemy, SpellSlot.Q, 1) - 20) > enemy.Health && hamQcd == 0 &&
+                        Player.Distance(enemy.ServerPosition) <= Q2.Range + enemy.BoundingRadius)
                     {
                         if (!HammerTime && R.IsReady())
                             R.Cast();
@@ -385,7 +411,8 @@ namespace JayceTheTwerker
                     }
 
                     //Hammer E
-                    if ((Player.GetSpellDamage(enemy, SpellSlot.E) - 20) > enemy.Health && hamEcd == 0 && Player.Distance(enemy.ServerPosition) <= E2.Range + enemy.BoundingRadius)
+                    if ((Player.GetSpellDamage(enemy, SpellSlot.E) - 20) > enemy.Health && hamEcd == 0 &&
+                        Player.Distance(enemy.ServerPosition) <= E2.Range + enemy.BoundingRadius)
                     {
                         if (!HammerTime && R.IsReady() && enemy.Health > 80)
                             R.Cast();
@@ -400,15 +427,16 @@ namespace JayceTheTwerker
             }
         }
 
-        public static void switchFormCheck(Obj_AI_Hero target, bool useQ, bool useW, bool useE, bool useQ2, bool useW2, bool useE2)
+        public static void switchFormCheck(Obj_AI_Hero target, bool useQ, bool useW, bool useE, bool useQ2, bool useW2,
+            bool useE2)
         {
             if (target.Health > 80)
             {
                 //switch to hammer
                 if ((canQcd != 0 || !useQ) &&
                     (canWcd != 0 && !hyperCharged() || !useW) && R.IsReady() &&
-                     hammerAllReady() && !HammerTime && Player.Distance(target.ServerPosition) < 650 &&
-                     (useQ2 || useW2 || useE2))
+                    hammerAllReady() && !HammerTime && Player.Distance(target.ServerPosition) < 650 &&
+                    (useQ2 || useW2 || useE2))
                 {
                     //Game.PrintChat("Hammer Time");
                     R.Cast();
@@ -425,9 +453,9 @@ namespace JayceTheTwerker
                 return;
             }
 
-            if(hamQcd != 0 && hamWcd !=0 && hamEcd != 0 && HammerTime && R.IsReady()){
+            if (hamQcd != 0 && hamWcd != 0 && hamEcd != 0 && HammerTime && R.IsReady())
+            {
                 R.Cast();
-                return;
             }
         }
 
@@ -440,6 +468,7 @@ namespace JayceTheTwerker
             }
             return false;
         }
+
         public static bool hammerAllReady()
         {
             if (hamQcd == 0 && hamWcd == 0 && hamEcd == 0)
@@ -458,9 +487,9 @@ namespace JayceTheTwerker
             return false;
         }
 
-        public static PredictionOutput GetP(Vector3 pos, Spell spell, Obj_AI_Base target, float delay, float speed, bool aoe)
+        public static PredictionOutput GetP(Vector3 pos, Spell spell, Obj_AI_Base target, float delay, float speed,
+            bool aoe)
         {
-
             return Prediction.GetPrediction(new PredictionInput
             {
                 Unit = target,
@@ -472,7 +501,7 @@ namespace JayceTheTwerker
                 Collision = spell.Collision,
                 Type = spell.Type,
                 RangeCheckFrom = Player.ServerPosition,
-                Aoe = aoe,
+                Aoe = aoe
             });
         }
 
@@ -489,8 +518,9 @@ namespace JayceTheTwerker
             //dieno :> <3
             if (tarPred.Hitchance >= HitChance.High && canQcd == 0 && canEcd == 0 && useE && !firstE)
             {
-                var GateVector = Player.Position + Vector3.Normalize(target.ServerPosition - Player.Position) * gateDis;
-                var vecClose = Player.ServerPosition - Vector3.Normalize(Player.ServerPosition - target.ServerPosition) * 50;
+                var GateVector = Player.Position + Vector3.Normalize(target.ServerPosition - Player.Position)*gateDis;
+                var vecClose = Player.ServerPosition -
+                               Vector3.Normalize(Player.ServerPosition - target.ServerPosition)*50;
 
                 if (Player.Distance(tarPred.CastPosition) < QCharge.Range + 100)
                 {
@@ -503,7 +533,7 @@ namespace JayceTheTwerker
                             firstE = true;
                             return;
                         }
-                        else if (QCharge.IsReady())
+                        if (QCharge.IsReady())
                         {
                             ePos = GateVector;
                             QCharge.Cast(tarPred.CastPosition, menu.Item("packet").GetValue<bool>());
@@ -511,7 +541,7 @@ namespace JayceTheTwerker
                             return;
                         }
                     }
-                    else if(E.IsReady() && QCharge.IsReady())
+                    else if (E.IsReady() && QCharge.IsReady())
                     {
                         E.Cast(GateVector, menu.Item("packet").GetValue<bool>());
                         QCharge.Cast(tarPred.CastPosition, menu.Item("packet").GetValue<bool>());
@@ -520,12 +550,12 @@ namespace JayceTheTwerker
                 }
             }
 
-            if ((menu.Item("UseQAlways").GetValue<bool>() || !useE) && canQcd == 0 && Q.GetPrediction(target).Hitchance >= HitChance.High && Player.Distance(target.ServerPosition) <= Q.Range && Q.IsReady())
+            if ((menu.Item("UseQAlways").GetValue<bool>() || !useE) && canQcd == 0 &&
+                Q.GetPrediction(target).Hitchance >= HitChance.High && Player.Distance(target.ServerPosition) <= Q.Range &&
+                Q.IsReady())
             {
                 Q.Cast(target, menu.Item("packet").GetValue<bool>());
-                return;
             }
-
         }
 
         public static void castQCannonMouse()
@@ -546,29 +576,27 @@ namespace JayceTheTwerker
             if (canEcd == 0 && canQcd == 0 && !HammerTime && !firstE)
             {
                 var gateDis = menu.Item("gatePlace").GetValue<Slider>().Value;
-                var GateVector = Player.ServerPosition + Vector3.Normalize(Game.CursorPos - Player.ServerPosition) * gateDis;
+                var GateVector = Player.ServerPosition +
+                                 Vector3.Normalize(Game.CursorPos - Player.ServerPosition)*gateDis;
 
-                if(!lagFree && Q.IsReady()){
+                if (!lagFree && Q.IsReady())
+                {
                     ePos = GateVector;
                     Q.Cast(Game.CursorPos, menu.Item("packet").GetValue<bool>());
                     firstE = true;
-                    return;
                 }
-                else if(E.IsReady() && Q.IsReady())
+                else if (E.IsReady() && Q.IsReady())
                 {
                     E.Cast(GateVector, menu.Item("packet").GetValue<bool>());
                     Q.Cast(Game.CursorPos, menu.Item("packet").GetValue<bool>());
-                    return;
                 }
             }
-
-            
         }
 
-        private static float canQcd = 0, canWcd = 0, canEcd = 0;
-        private static float hamQcd = 0, hamWcd = 0, hamEcd = 0;
-        private static float canQcdRem = 0, canWcdRem = 0, canEcdRem = 0;
-        private static float hamQcdRem = 0, hamWcdRem = 0, hamEcdRem = 0;
+        private static float canQcd, canWcd, canEcd;
+        private static float hamQcd, hamWcd, hamEcd;
+        private static float canQcdRem, canWcdRem, canEcdRem;
+        private static float hamQcdRem, hamWcdRem, hamEcdRem;
 
         private static void ProcessCooldowns()
         {
@@ -582,7 +610,7 @@ namespace JayceTheTwerker
 
         private static float CalculateCd(float time)
         {
-            return time + (time * Player.PercentCooldownMod);
+            return time + (time*Player.PercentCooldownMod);
         }
 
         private static void GetCooldowns(GameObjectProcessSpellCastEventArgs spell)
@@ -601,7 +629,6 @@ namespace JayceTheTwerker
             }
             else
             {
-
                 if (spell.SData.Name == "jayceshockblast")
                     canQcdRem = Game.Time + CalculateCd(CannonQcd[Q.Level - 1]);
                 if (spell.SData.Name == "jaycehypercharge")
@@ -641,7 +668,7 @@ namespace JayceTheTwerker
                 if (menu.Item("HarassActive").GetValue<KeyBind>().Active)
                     Harass();
 
-                if(menu.Item("HarassActiveT").GetValue<KeyBind>().Active)
+                if (menu.Item("HarassActiveT").GetValue<KeyBind>().Active)
                     Harass();
             }
         }
@@ -663,7 +690,8 @@ namespace JayceTheTwerker
                         }
                 }
 
-                if (menu.Item("HarassActive").GetValue<KeyBind>().Active || menu.Item("HarassActiveT").GetValue<KeyBind>().Active)
+                if (menu.Item("HarassActive").GetValue<KeyBind>().Active ||
+                    menu.Item("HarassActiveT").GetValue<KeyBind>().Active)
                 {
                     if (canWcd == 0 && Player.Distance(target) < 600 && !HammerTime && W.Level > 0 && W.IsReady())
                         if (useWHarass)
@@ -690,7 +718,6 @@ namespace JayceTheTwerker
                 var wts = Drawing.WorldToScreen(Player.Position);
                 if (HammerTime) // lets show cooldown timers for the opposite form :)
                 {
-                   
                     if (canQcd == 0)
                         Drawing.DrawText(wts[0] - 80, wts[1], Color.White, "Q Ready");
                     else
@@ -703,7 +730,6 @@ namespace JayceTheTwerker
                         Drawing.DrawText(wts[0], wts[1], Color.White, "E Ready");
                     else
                         Drawing.DrawText(wts[0], wts[1], Color.Orange, "E: " + canEcd.ToString("0.0"));
-
                 }
                 else
                 {
@@ -719,14 +745,13 @@ namespace JayceTheTwerker
                         Drawing.DrawText(wts[0], wts[1], Color.White, "E Ready");
                     else
                         Drawing.DrawText(wts[0], wts[1], Color.Orange, "E: " + hamEcd.ToString("0.0"));
-
                 }
             }
-
         }
+
         private static void OnCreate(GameObject sender, EventArgs args)
         {
-            var spell = (Obj_SpellMissile)sender;
+            var spell = (Obj_SpellMissile) sender;
             var unit = spell.SpellCaster.Name;
             var name = spell.SData.Name;
 
@@ -737,7 +762,8 @@ namespace JayceTheTwerker
                     E.Cast(ePos, menu.Item("packet").GetValue<bool>());
                     firstE = false;
                 }
-                else if (menu.Item("forceGate").GetValue<bool>() && canEcd == 0 && Player.Distance(spell.Position) < 250 && E.IsReady())
+                else if (menu.Item("forceGate").GetValue<bool>() && canEcd == 0 && Player.Distance(spell.Position) < 250 &&
+                         E.IsReady())
                 {
                     E.Cast(spell.EndPosition, menu.Item("packet").GetValue<bool>());
                     firstE = false;
@@ -747,7 +773,7 @@ namespace JayceTheTwerker
 
         private static void OnDelete(GameObject sender, EventArgs args)
         {
-            var spell = (Obj_SpellMissile)sender;
+            var spell = (Obj_SpellMissile) sender;
             var unit = spell.SpellCaster.Name;
             var name = spell.SData.Name;
 
@@ -757,6 +783,7 @@ namespace JayceTheTwerker
                 ePos = Vector3.Zero;
             }
         }
+
         public static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base unit, GameObjectProcessSpellCastEventArgs attack)
         {
             if (unit.IsMe)
@@ -767,11 +794,12 @@ namespace JayceTheTwerker
         {
             if (!menu.Item("UseGap").GetValue<bool>()) return;
 
-            if (hamEcd == 0 && gapcloser.Sender.IsValidTarget(E2.Range + gapcloser.Sender.BoundingRadius)){
+            if (hamEcd == 0 && gapcloser.Sender.IsValidTarget(E2.Range + gapcloser.Sender.BoundingRadius))
+            {
                 if (!HammerTime && R.IsReady())
                     R.Cast();
 
-                if(E2.IsReady())
+                if (E2.IsReady())
                     E2.Cast(gapcloser.Sender, menu.Item("packet").GetValue<bool>());
             }
         }
@@ -785,7 +813,7 @@ namespace JayceTheTwerker
                 if (!HammerTime && R.IsReady())
                     R.Cast();
 
-                if(Q2.IsReady())
+                if (Q2.IsReady())
                     Q2.Cast(unit, menu.Item("packet").GetValue<bool>());
             }
 
@@ -794,11 +822,9 @@ namespace JayceTheTwerker
                 if (!HammerTime && R.IsReady())
                     R.Cast();
 
-                if(E2.IsReady())
-                E2.Cast(unit, menu.Item("packet").GetValue<bool>());
+                if (E2.IsReady())
+                    E2.Cast(unit, menu.Item("packet").GetValue<bool>());
             }
         }
-
-
     }
 }
