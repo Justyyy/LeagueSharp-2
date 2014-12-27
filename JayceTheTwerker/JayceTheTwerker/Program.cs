@@ -183,16 +183,10 @@ namespace JayceTheTwerker
             Interrupter.OnPossibleToInterrupt += Interrupter_OnPosibleToInterrupt;
             GameObject.OnCreate += OnCreate;
             GameObject.OnDelete += OnDelete;
-            Orbwalking.AfterAttack += Orbwalking_AfterAttack;
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
             Game.PrintChat(Player.ChampionName +
                            " Loaded by --- xSalice, If you like my Assemblies, please feel free to donate to keep me motivated! :D");
-        }
-
-        private static void Orbwalking_AfterAttack(AttackableUnit unit, AttackableUnit target)
-        {
-            throw new NotImplementedException();
         }
 
         private static float GetComboDamage(Obj_AI_Base enemy)
