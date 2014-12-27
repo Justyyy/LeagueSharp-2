@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.InteropServices;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
@@ -121,7 +119,6 @@ namespace Gragas
             AntiGapcloser.OnEnemyGapcloser += OnEnemyGapcloser;
 
             Game.OnGameUpdate += Game_OnGameUpdate;
-            Orbwalking.AfterAttack += Orbwalking_AfterAttack;
             Orbwalking.BeforeAttack += Orbwalking_BeforeAttack;
             GameObject.OnCreate += OnCreateObject;
             GameObject.OnDelete += OnDeleteObject;
@@ -162,7 +159,7 @@ namespace Gragas
 
             if (useQ)
             {
-                var t = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
                 if (Q.IsReady() && _qObject == null && t.IsValidTarget(Q.Range))
                 {
                     PredictionOutput pred = Q.GetPrediction(t, true);
@@ -338,7 +335,7 @@ namespace Gragas
 
             if (useQ && Q.IsReady())
             {
-                var t = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
                 if (Q.IsReady() && _qObject == null && t.IsValidTarget(Q.Range))
                 {
                     PredictionOutput pred = Q.GetPrediction(t, true);
@@ -365,7 +362,7 @@ namespace Gragas
 
             if (useE && W.IsReady())
             {
-                var t = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Magical);
+                var t = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
                 if (E.IsReady() && t.IsValidTarget(E.Range))
                 {
                     var pred = Prediction.GetPrediction(t, E.Delay, E.Width / 2, E.Speed);
@@ -378,7 +375,7 @@ namespace Gragas
 
             if (useR && R.IsReady())
             {
-                var t = SimpleTs.GetTarget(R.Range, SimpleTs.DamageType.Magical);
+                var t = TargetSelector.GetTarget(R.Range, TargetSelector.DamageType.Magical);
                 if (R.IsReady() && t.IsValidTarget(R.Range))
                 {
                     if (R.IsKillable(t))
@@ -402,7 +399,7 @@ namespace Gragas
 
         private static void ComboQ()
         {
-            var t = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Magical);
+            var t = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
             if (Q.IsReady() && _qObject == null && t.IsValidTarget(Q.Range))
             {
                 Q.Cast(t, false, Config.Item("UsePackets").GetValue<bool>());
@@ -412,7 +409,7 @@ namespace Gragas
 
         private static void ComboQ2()
         {
-            var t = SimpleTs.GetTarget(Q2.Range, SimpleTs.DamageType.Magical);
+            var t = TargetSelector.GetTarget(Q2.Range, TargetSelector.DamageType.Magical);
             if (_qObject == null) return;
             if (t.Distance(_qObject.Position) < Q2.Range)
             {
@@ -422,7 +419,7 @@ namespace Gragas
 
         private static void ComboW()
         {
-            var t = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Magical);
+            var t = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
             if (W.IsReady() && _player.Distance(t) < 250)
             {
                 W.Cast();
@@ -431,7 +428,7 @@ namespace Gragas
 
         private static void ComboE()
         {
-            var t = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Magical);
+            var t = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
             if (E.IsReady() && t.IsValidTarget(E.Range))
             {
                 E.Cast(t, false, Config.Item("UsePackets").GetValue<bool>());
@@ -440,7 +437,7 @@ namespace Gragas
 
         private static void ComboR()
         {
-            var t = SimpleTs.GetTarget(R.Range, SimpleTs.DamageType.Magical);
+            var t = TargetSelector.GetTarget(R.Range, TargetSelector.DamageType.Magical);
             Game.PrintChat(R.GetDamage(t, 1).ToString(CultureInfo.InvariantCulture));
             if (R.IsReady() && t.IsValidTarget(R.Range) && R.IsKillable(t))
             {
