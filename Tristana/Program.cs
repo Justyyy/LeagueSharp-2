@@ -33,7 +33,7 @@ namespace Tristana
             Config = new Menu("RocketGirl Tristana", ChampionName, true);
 
             var targetSelectorMenu = new Menu("Target Selector", "Target Selector");
-            SimpleTs.AddToMenu(targetSelectorMenu);
+            TargetSelector.AddToMenu(targetSelectorMenu);
             Config.AddSubMenu(targetSelectorMenu);
 
             Config.AddSubMenu(new Menu("Orbwalking", "Orbwalking"));
@@ -95,7 +95,7 @@ namespace Tristana
         private static void Harass()
         {
             var useE = Config.Item("UseEHarass").GetValue<bool>();
-            var target = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Physical);
+            var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Physical);
             if (target == null)
             {
                 return;
@@ -130,7 +130,7 @@ namespace Tristana
             var useQ = Config.Item("UseQCombo").GetValue<bool>();
             var useE = Config.Item("UseECombo").GetValue<bool>();
             var useR = Config.Item("UseRCombo").GetValue<bool>();
-            var target = SimpleTs.GetTarget(Q.Range, SimpleTs.DamageType.Physical);
+            var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Physical);
             if (target == null)
             {
                 return;
