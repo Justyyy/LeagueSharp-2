@@ -492,7 +492,7 @@ namespace Rive
                 killableEnemy = enemy;
                 hitsToKill = killHits;
             }
-            return hitsToKill < 4 ? killableEnemy : SimpleTs.GetTarget(GetAutoAttackRange() + 100, SimpleTs.DamageType.Physical);
+            return hitsToKill < 4 ? killableEnemy : TargetSelector.GetTarget(GetAutoAttackRange() + 100, TargetSelector.DamageType.Physical);
         }
 
         private static double CountKillhits(Obj_AI_Hero enemy)
