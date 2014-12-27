@@ -243,7 +243,7 @@ namespace SFXUtility.Feature
               // foreach (var sSlot in _summonerSpellSlots) {
                    //for (int i = 0; i < _summonerSpellSlots.Length; i++) 
                     var index = i;
-                    var spell = Hero.SummonerSpellbook.GetSpell(_summonerSpellSlots[index]);
+                    var spell = Hero.Spellbook.GetSpell(_summonerSpellSlots[index]);
                    // Game.PrintChat(spell.Name);
                     var summoner = Resources.ResourceManager.GetObject(string.Format("CD_{0}", spell.Name.ToLower())) ??
                                    Resources.CD_summonerbarrier;

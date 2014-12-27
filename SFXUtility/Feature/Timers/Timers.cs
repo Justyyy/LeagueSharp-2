@@ -20,14 +20,16 @@
 
 #endregion
 
-namespace SFXUtility.Feature
+using System;
+using LeagueSharp.Common;
+using SFXUtility.Class;
+using SFXUtility.IoCContainer;
+
+namespace SFXUtility.Feature.Timers
 {
     #region
 
-    using System;
-    using Class;
-    using IoCContainer;
-    using LeagueSharp.Common;
+    
 
     #endregion
 

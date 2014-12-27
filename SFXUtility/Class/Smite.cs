@@ -49,7 +49,7 @@ namespace SFXUtility.Class
         {
             foreach (
                 var spell in
-                    ObjectManager.Player.SummonerSpellbook.Spells.Where(
+                    ObjectManager.Player.Spellbook.Spells.Where(
                         spell => String.Equals(spell.Name, SummonerName, StringComparison.CurrentCultureIgnoreCase)))
             {
                 Available = true;
@@ -78,7 +78,7 @@ namespace SFXUtility.Class
         {
             return Available && !ObjectManager.Player.IsDead && !ObjectManager.Player.IsStunned &&
                    Slot != SpellSlot.Unknown &&
-                   ObjectManager.Player.SummonerSpellbook.CanUseSpell(Slot) == SpellState.Ready;
+                   ObjectManager.Player.Spellbook.CanUseSpell(Slot) == SpellState.Ready;
         }
 
         public bool CanUseSpell(Obj_AI_Minion target)
@@ -91,7 +91,7 @@ namespace SFXUtility.Class
         {
             if (!CanUseSpell(target))
                 return false;
-            ObjectManager.Player.SummonerSpellbook.CastSpell(Slot, target);
+            ObjectManager.Player.Spellbook.CastSpell(Slot, target);
             return true;
         }
 

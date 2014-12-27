@@ -65,7 +65,7 @@ namespace SFXUtility.Feature
 
         private float _lastCheck = Environment.TickCount;
 
-        private Timers _timers;
+        private Timers.Timers _timers;
 
         #endregion
 
@@ -148,9 +148,9 @@ namespace SFXUtility.Feature
             {
                 Logger.Prefix = string.Format("{0} - {1}", BaseName, Name);
 
-                if (IoC.IsRegistered<Timers>() && IoC.Resolve<Timers>().Initialized)
+                if (IoC.IsRegistered<Timers.Timers>() && IoC.Resolve<Timers.Timers>().Initialized)
                 {
-                    TimersLoaded(IoC.Resolve<Timers>());
+                    TimersLoaded(IoC.Resolve<Timers.Timers>());
                 }
                 else
                 {
@@ -215,9 +215,9 @@ namespace SFXUtility.Feature
         {
             try
             {
-                if (o is Timers && (o as Timers).Menu != null)
+                if (o is Timers.Timers && (o as Timers.Timers).Menu != null)
                 {
-                    _timers = (o as Timers);
+                    _timers = (o as Timers.Timers);
 
                     Menu = new Menu(Name, Name);
 

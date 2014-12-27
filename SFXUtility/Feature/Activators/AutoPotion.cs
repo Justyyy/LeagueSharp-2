@@ -211,7 +211,7 @@ namespace SFXUtility.Feature
                     {
                         InventorySlot healthSlot = GetPotionSlot(PotionType.Health);
                         if (healthSlot != null && !IsBuffActive(PotionType.Health))
-                            healthSlot.UseItem();
+                            ObjectManager.Player.Spellbook.CastSpell(healthSlot.SpellSlot);
                     }
                 }
 
@@ -222,7 +222,7 @@ namespace SFXUtility.Feature
                     {
                         InventorySlot manaSlot = GetPotionSlot(PotionType.Mana);
                         if (manaSlot != null && !IsBuffActive(PotionType.Mana))
-                            manaSlot.UseItem();
+                            ObjectManager.Player.Spellbook.CastSpell(manaSlot.SpellSlot);
                     }
                 }
             }
