@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
-using LX_Orbwalker;
 using Color = System.Drawing.Color;
 
 namespace JayceTheTwerker
@@ -15,6 +10,7 @@ namespace JayceTheTwerker
     class Program
     {
         public const string ChampionName = "Jayce";
+        public static Orbwalking.Orbwalker Orbwalker;
 
         //Spells
         public static List<Spell> SpellList = new List<Spell>();
@@ -90,13 +86,13 @@ namespace JayceTheTwerker
             menu = new Menu(ChampionName, ChampionName, true);
 
             //Orbwalker submenu
-            var orbwalkerMenu = new Menu("My Orbwalker", "my_Orbwalker");
-            LXOrbwalker.AddToMenu(orbwalkerMenu);
-            menu.AddSubMenu(orbwalkerMenu);
+            menu.AddSubMenu(new Menu("Orbwalking", "Orbwalking"));
+
+            Orbwalker = new Orbwalking.Orbwalker(menu.SubMenu("Orbwalking"));
 
             //Target selector
             var targetSelectorMenu = new Menu("Target Selector", "Target Selector");
-            SimpleTs.AddToMenu(targetSelectorMenu);
+            TargetSelector.AddToMenu(targetSelectorMenu);
             menu.AddSubMenu(targetSelectorMenu);
 
 
@@ -172,10 +168,15 @@ namespace JayceTheTwerker
             Interrupter.OnPossibleToInterrupt += Interrupter_OnPosibleToInterrupt;
             GameObject.OnCreate += OnCreate;
             GameObject.OnDelete += OnDelete;
-            LXOrbwalker.AfterAttack += Orbwalking_AfterAttack;
+            Orbwalking.AfterAttack += Orbwalking_AfterAttack;
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
             Game.PrintChat(Player.ChampionName + " Loaded by --- xSalice, If you like my Assemblies, please feel free to donate to keep me motivated! :D");
+        }
+
+        private static void Orbwalking_AfterAttack(AttackableUnit unit, AttackableUnit target)
+        {
+            throw new NotImplementedException();
         }
 
         private static float GetComboDamage(Obj_AI_Base enemy)
@@ -215,14 +216,14 @@ namespace JayceTheTwerker
 
         private static void UseSpells(bool useQ, bool useW, bool useE, bool useQ2, bool useW2, bool useE2, bool useR, String source)
         {
-            var qTarget = SimpleTs.GetTarget(QCharge.Range, SimpleTs.DamageType.Physical);
-            var q2Target = SimpleTs.GetTarget(Q2.Range, SimpleTs.DamageType.Physical);
+            var qTarget = TargetSelector.GetTarget(QCharge.Range, TargetSelector.DamageType.Physical);
+            var q2Target = TargetSelector.GetTarget(Q2.Range, TargetSelector.DamageType.Physical);
 
-            var wTarget = SimpleTs.GetTarget(W.Range, SimpleTs.DamageType.Physical);
-            var w2Target = SimpleTs.GetTarget(W2.Range, SimpleTs.DamageType.Magical);
+            var wTarget = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Physical);
+            var w2Target = TargetSelector.GetTarget(W2.Range, TargetSelector.DamageType.Magical);
 
-            var eTarget = SimpleTs.GetTarget(E.Range, SimpleTs.DamageType.Physical);
-            var e2Target = SimpleTs.GetTarget(E2.Range, SimpleTs.DamageType.Physical);
+            var eTarget = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Physical);
+            var e2Target = TargetSelector.GetTarget(E2.Range, TargetSelector.DamageType.Physical);
 
             //mana manager for harass
             var mana = menu.Item("manaH").GetValue<Slider>().Value;
@@ -529,7 +530,7 @@ namespace JayceTheTwerker
 
         public static void castQCannonMouse()
         {
-            LXOrbwalker.Orbwalk(Game.CursorPos, null);
+            Orbwalker.SetOrbwalkingPoint(Game.CursorPos);
 
             if (HammerTime && !R.IsReady())
                 return;
