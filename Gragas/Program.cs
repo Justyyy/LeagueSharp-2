@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Globalization;
+using System.ComponentModel;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
@@ -17,24 +17,19 @@ namespace Gragas
         private static Obj_AI_Hero _player;
         private static GameObject _qObject;
         private static float _qObjectCreateTime;
-        private static bool _canUseQLaunch = true;
-
-        public static bool CanUseQLaunch
-        {
-            get { return _canUseQLaunch; }
-            set { _canUseQLaunch = value; }
-        }
+        public static bool BarrelIsCast { get; set; }
 
         public static float QObjectMaxDamageTime { get; set; }
 
         public static void Main(string[] args)
         {
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
-            _qObject = null;
+            
         }
 
         private static void Game_OnGameLoad(EventArgs args)
         {
+            _qObject = null;
             _player = ObjectManager.Player;
             if (_player.BaseSkinName != ChampionName) return;
             Game.PrintChat("Loading 'Roll Out The Barrel'...");
@@ -71,13 +66,15 @@ namespace Gragas
             Config.AddSubMenu(new Menu("Harass", "Harass"));
             Config.SubMenu("Harass").AddItem(new MenuItem("UseQHarass", "Use Q").SetValue(true));
 
-            Config.AddSubMenu(new Menu("LaneClear", "LaneClear"));
-            Config.SubMenu("LaneClear").AddItem(new MenuItem("UseQLaneClear", "Use Q").SetValue(true));
-            Config.SubMenu("LaneClear").AddItem(new MenuItem("UseWLaneClear", "Use W").SetValue(true));
-            Config.SubMenu("LaneClear").AddItem(new MenuItem("UseELaneClear", "Use E").SetValue(true));
-            Config.SubMenu("LaneClear").AddItem(new MenuItem("UseRLaneClear", "Use R").SetValue(true));
+            //Config.AddSubMenu(new Menu("LaneClear", "LaneClear"));
+            //Config.SubMenu("LaneClear").AddItem(new MenuItem("UseQLaneClear", "Use Q").SetValue(true));
+            //Config.SubMenu("LaneClear").AddItem(new MenuItem("UseWLaneClear", "Use W").SetValue(true));
+            //Config.SubMenu("LaneClear").AddItem(new MenuItem("UseELaneClear", "Use E").SetValue(true));
+            //Config.SubMenu("LaneClear").AddItem(new MenuItem("UseRLaneClear", "Use R").SetValue(true));
 
             Config.AddSubMenu(new Menu("Misc", "Misc"));
+            Config.SubMenu("Misc")
+                .AddItem(new MenuItem("UseRKillsteal", "Killsteal with R").SetValue(true));
             Config.SubMenu("Misc")
                 .AddItem(new MenuItem("UseEAntiGapcloser", "E on Gapclose (Incomplete)").SetValue(true));
             Config.SubMenu("Misc")
@@ -120,20 +117,34 @@ namespace Gragas
 
             Game.OnGameUpdate += Game_OnGameUpdate;
             Orbwalking.BeforeAttack += Orbwalking_BeforeAttack;
+            Game.OnGameInput += Game_OnGameInput;
             GameObject.OnCreate += OnCreateObject;
             GameObject.OnDelete += OnDeleteObject;
             Config.AddToMainMenu();
             Game.PrintChat("'Roll Out The Barrel' Loaded!");
         }
 
+        private static void Game_OnGameInput(GameInputEventArgs args)
+        {
+            if (args.Input == ".status")
+            {
+                Game.PrintChat(_qObject == null ? "qObject does not exist." : _qObject.ToString());
+                Game.PrintChat(BarrelIsCast == false ? "BarrelIsCast = FALSE" : "BarrelIsCast = TRUE");
+            }
+        }
+
         private static void Orbwalking_BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
+        {
+        }
+
+        public static void Orbwalking_AfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
         {
             //throw new NotImplementedException();
         }
 
-        private static void Orbwalking_AfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
+        public static bool QActivated
         {
-            //throw new NotImplementedException();
+            get { return ObjectManager.Player.Spellbook.GetSpell(SpellSlot.Q).ToggleState == 1 || _qObject != null; }
         }
 
         private static void Game_OnGameUpdate(EventArgs args)
@@ -149,30 +160,85 @@ namespace Gragas
             }
             if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear)
             {
-                LaneClear();
+                //LaneClear();
             }
+            CheckKillSteal();
+        }
+
+        private static void CheckKillSteal()
+        {
+            if (_player.Position.CountEnemysInRange((int) R.Range) > 0 && R.IsReady())
+            {
+                foreach(Obj_AI_Hero hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => R.IsKillable(hero) && hero.IsValidTarget(R.Range)))
+                {
+                    R.Cast(hero);
+                }
+            }
+        }
+
+        private static void ThrowBarrel(Obj_AI_Hero tar, bool packet)
+        {
+            if (BarrelIsCast) return;
+            if (Q.Cast(tar, packet) == Spell.CastStates.SuccessfullyCasted)
+            {
+                BarrelIsCast = true;
+            }
+        }
+        //private static void ThrowBarrel(Vector3 pos, bool packet)
+        //{
+        //    if (BarrelIsCast) return;
+        //    if (Q.Cast(pos, packet) == Spell.CastStates.SuccessfullyCasted)
+        //    {
+        //        BarrelIsCast = true;
+        //    }
+        //    new Spell().
+        //}
+
+        private static bool SecondQReady()
+        {
+            return Q.IsReady() && _player.HasBuff("GragasQ");
+        }
+
+        private static bool FirstQReady()
+        {
+            if (Q.IsReady() && !_player.HasBuff("GragasQ"))
+            {
+                BarrelIsCast = false;
+                return true;
+            }
+            return false;
+        }
+
+
+        private static void ExplodeBarrel()
+        {
+            if (!BarrelIsCast) return;
+            Q.Cast();
+            BarrelIsCast = false;
         }
 
         private static void Harass()
         {
             var useQ = Config.Item("UseQHarass").GetValue<bool>();
 
-            if (useQ)
+            if (!useQ) return;
+            var t = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
+            if (FirstQReady() && t.IsValidTarget(Q.Range))
             {
-                var t = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
-                if (Q.IsReady() && _qObject == null && t.IsValidTarget(Q.Range))
+                ThrowBarrel(t, Config.Item("UsePackets").GetValue<bool>());
+            }
+            if (SecondQReady())
+            {
+                
+                if (t.IsMoving)
                 {
-                    PredictionOutput pred = Q.GetPrediction(t, true);
-                    Q.Cast(pred.CastPosition, Config.Item("UsePackets").GetValue<bool>());
+                    ExplodeBarrel();
                 }
-                if (_qObject != null)
+                if ((Game.Time - QObjectMaxDamageTime) >= 0)
                 {
-                    if ((Game.Time - QObjectMaxDamageTime) >= 0)
+                    if (_qObject != null && t.Distance(_qObject.Position) < _qObject.BoundingRadius)
                     {
-                        if (t.Distance(_qObject.Position) < Q2.Range)
-                        {
-                            Q.Cast();
-                        }
+                        ExplodeBarrel();
                     }
                 }
             }
@@ -236,87 +302,83 @@ namespace Gragas
             return comboDamage;
         }
 
-        private static void LaneClear()
-        {
-            var useQ = Config.Item("UseQLaneClear").GetValue<bool>();
-            var useW = Config.Item("UseWLaneClear").GetValue<bool>();
-            var useE = Config.Item("UseELaneClear").GetValue<bool>();
+        //private static void LaneClear()
+        //{
+        //    var useQ = Config.Item("UseQLaneClear").GetValue<bool>();
+        //    var useW = Config.Item("UseWLaneClear").GetValue<bool>();
+        //    var useE = Config.Item("UseELaneClear").GetValue<bool>();
 
-            var rangedMinions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q.Range,
-                MinionTypes.Ranged);
-            var allMinions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q.Range);
+        //    var rangedMinions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q.Range,
+        //        MinionTypes.Ranged);
+        //    var allMinions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q.Range);
 
-            var jungleMinions = MinionManager.GetMinions(ObjectManager.Player.Position, Q.Range,
-                MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth);
+        //    var jungleMinions = MinionManager.GetMinions(ObjectManager.Player.Position, Q.Range,
+        //        MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth);
 
-            allMinions.AddRange(jungleMinions);
-            MinionManager.FarmLocation rangedLocation;
-            MinionManager.FarmLocation location;
-            MinionManager.FarmLocation bLocation;
-            if (useQ && Q.IsReady())
-            {
-                var barrelRoll = _player.HasBuff("GragasQ");
-                rangedLocation = Q.GetCircularFarmLocation(rangedMinions);
-                location = Q.GetCircularFarmLocation(allMinions);
-                bLocation = (location.MinionsHit > rangedLocation.MinionsHit + 1)
-                    ? location
-                    : rangedLocation;
+        //    allMinions.AddRange(jungleMinions);
+        //    MinionManager.FarmLocation rangedLocation;
+        //    MinionManager.FarmLocation location;
+        //    MinionManager.FarmLocation bLocation;
+        //    if (useQ && Q.IsReady())
+        //    {
+        //        var barrelRoll = _player.HasBuff("GragasQ");
+        //        rangedLocation = Q.GetCircularFarmLocation(rangedMinions);
+        //        location = Q.GetCircularFarmLocation(allMinions);
+        //        bLocation = (location.MinionsHit > rangedLocation.MinionsHit + 1)
+        //            ? location
+        //            : rangedLocation;
 
-                if (!barrelRoll && bLocation.MinionsHit > 0)
-                {
-                    Q.Cast(bLocation.Position.To3D());
-                }
-                if (barrelRoll)
-                {
-                    var minionsHit =
-                        allMinions.Count(
-                            minion =>
-                                Vector3.Distance(bLocation.Position.To3D(), minion.ServerPosition) <= Q.Width &&
-                                Q.GetDamage(minion) > minion.Health);
-                    if (minionsHit >= 3)
-                    {
-                        Q.Cast();
-                    }
-                }
-            }
-            if (useE && E.IsReady())
-            {
-                rangedLocation = Q.GetCircularFarmLocation(rangedMinions);
-                location = Q.GetCircularFarmLocation(allMinions);
-                bLocation = (location.MinionsHit > rangedLocation.MinionsHit + 1)
-                    ? location
-                    : rangedLocation;
-                if (bLocation.MinionsHit > 2)
-                {
-                    E.Cast(bLocation.Position.To3D());
-                }
-            }
-            if (useW && W.IsReady())
-            {
-                W.Cast();
-            }
-        }
+        //        if (!barrelRoll && bLocation.MinionsHit > 0)
+        //        {
+        //            Q.Cast(bLocation.Position.To3D());
+        //        }
+        //        if (barrelRoll)
+        //        {
+        //            var minionsHit =
+        //                allMinions.Count(
+        //                    minion =>
+        //                        Vector3.Distance(bLocation.Position.To3D(), minion.ServerPosition) <= Q.Width &&
+        //                        Q.GetDamage(minion) > minion.Health);
+        //            if (minionsHit >= 3)
+        //            {
+        //                ExplodeBarrel();
+        //            }
+        //        }
+        //    }
+        //    if (useE && E.IsReady())
+        //    {
+        //        rangedLocation = Q.GetCircularFarmLocation(rangedMinions);
+        //        location = Q.GetCircularFarmLocation(allMinions);
+        //        bLocation = (location.MinionsHit > rangedLocation.MinionsHit + 1)
+        //            ? location
+        //            : rangedLocation;
+        //        if (bLocation.MinionsHit > 2)
+        //        {
+        //            E.Cast(bLocation.Position.To3D());
+        //        }
+        //    }
+        //    if (useW && W.IsReady())
+        //    {
+        //        W.Cast();
+        //    }
+        //}
 
         
 
         private static void OnCreateObject(GameObject sender, EventArgs args)
         {
-            if (sender.Name.Contains("Gragas") && sender.Name.Contains("Q_Ally"))
-            {
-                _qObject = sender;
-                _qObjectCreateTime = Game.Time;
-                QObjectMaxDamageTime = _qObjectCreateTime + 2;
-                CanUseQLaunch = false;
-            }
+            if (!sender.Name.Contains("Gragas") || !sender.Name.Contains("Q_Ally")) return;
+            _qObject = sender;
+            _qObjectCreateTime = Game.Time;
+            BarrelIsCast = true;
+            QObjectMaxDamageTime = _qObjectCreateTime + 2;
         }
 
         private static void OnDeleteObject(GameObject sender, EventArgs args)
         {
-            if (sender.Name.Contains("Gragas") && sender.Name.Contains("Q_Ally"))
-            {
-                _qObject = null;
-                CanUseQLaunch = true;
-            }
+            if (!sender.Name.Contains("Gragas") || !sender.Name.Contains("Q_Ally")) return;
+            _qObject = null;
+            BarrelIsCast = false;
         }
 
         private static void OnEnemyGapcloser(ActiveGapcloser gapcloser)
@@ -332,26 +394,7 @@ namespace Gragas
             var useR = Config.Item("UseRCombo").GetValue<bool>();
 
 
-
-            if (useQ && Q.IsReady())
-            {
-                var t = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
-                if (Q.IsReady() && _qObject == null && t.IsValidTarget(Q.Range))
-                {
-                    PredictionOutput pred = Q.GetPrediction(t, true);
-                    Q.Cast(pred.CastPosition, Config.Item("UsePackets").GetValue<bool>());
-                }
-                if (_qObject != null)
-                {
-                    if ((Game.Time - QObjectMaxDamageTime) >= 0)
-                    {
-                        if (t.Distance(_qObject.Position) < Q2.Range)
-                        {
-                            Q.Cast();
-                        }
-                    }
-                }
-            }
+            Obj_AI_Hero t;
             if (useW && W.IsReady())
             {
                 if (W.IsReady())
@@ -359,102 +402,73 @@ namespace Gragas
                     W.Cast();
                 }
             }
-
-            if (useE && W.IsReady())
+            if (useQ)
             {
-                var t = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
-                if (E.IsReady() && t.IsValidTarget(E.Range))
+                t = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
+                if (FirstQReady() && t.IsValidTarget(Q.Range))
                 {
-                    var pred = Prediction.GetPrediction(t, E.Delay, E.Width / 2, E.Speed);
-                    E.Cast(pred.CastPosition);
+                    ThrowBarrel(t, Config.Item("UsePackets").GetValue<bool>());
+                }
+                if (SecondQReady())
+                {
+                    if (t.IsMoving)
+                    {
+                        ExplodeBarrel();
+                    }
+                    if ((Game.Time - QObjectMaxDamageTime) >= 0)
+                    {
+                        if (_qObject != null && t.Distance(_qObject.Position) < _qObject.BoundingRadius)
+                        {
+                            ExplodeBarrel();
+                        }
+                    }
+                }
+            }
+            
+
+            if (useE && E.IsReady())
+            {
+                t = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
+                if (t.IsValidTarget(E.Range))
+                {
+                    if (E.Cast(t) == Spell.CastStates.SuccessfullyCasted)
+                    {
+                        if (_player.HasBuff("gragaswself"))
+                            ObjectManager.Player.IssueOrder(GameObjectOrder.AttackUnit, t);
+                    }
                 }
                 //
             }
 
 
-
             if (useR && R.IsReady())
             {
-                var t = TargetSelector.GetTarget(R.Range, TargetSelector.DamageType.Magical);
-                if (R.IsReady() && t.IsValidTarget(R.Range))
+                t = TargetSelector.GetTarget(R.Range, TargetSelector.DamageType.Magical);
+                if (t.IsValidTarget(R.Range))
                 {
                     if (R.IsKillable(t))
                     {
-                        if (!RKillStealIsTargetInQ(t))
-                        {
-                            var pred = Prediction.GetPrediction(t, R.Delay, R.Width/2, R.Speed);
-                            R.Cast(pred.CastPosition);
-                        }
-                        else
+                        if (RKillStealIsTargetInQ(t))
                         {
                             if (Q.IsKillable(t))
                             {
-                                Q.Cast();
+                                ExplodeBarrel();
                             }
+                        }
+                        else
+                        {
+                            var pred = Prediction.GetPrediction(t, R.Delay, R.Width/2, R.Speed);
+                            R.Cast(pred.CastPosition);
                         }
                     }
                 }
             }
         }
 
-        private static void ComboQ()
-        {
-            var t = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
-            if (Q.IsReady() && _qObject == null && t.IsValidTarget(Q.Range))
-            {
-                Q.Cast(t, false, Config.Item("UsePackets").GetValue<bool>());
-                _qObject = new GameObject();
-            }
-        }
-
-        private static void ComboQ2()
-        {
-            var t = TargetSelector.GetTarget(Q2.Range, TargetSelector.DamageType.Magical);
-            if (_qObject == null) return;
-            if (t.Distance(_qObject.Position) < Q2.Range)
-            {
-                Q.Cast();
-            }
-        }
-
-        private static void ComboW()
-        {
-            var t = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
-            if (W.IsReady() && _player.Distance(t) < 250)
-            {
-                W.Cast();
-            }
-        }
-
-        private static void ComboE()
-        {
-            var t = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
-            if (E.IsReady() && t.IsValidTarget(E.Range))
-            {
-                E.Cast(t, false, Config.Item("UsePackets").GetValue<bool>());
-            }
-        }
-
-        private static void ComboR()
-        {
-            var t = TargetSelector.GetTarget(R.Range, TargetSelector.DamageType.Magical);
-            Game.PrintChat(R.GetDamage(t, 1).ToString(CultureInfo.InvariantCulture));
-            if (R.IsReady() && t.IsValidTarget(R.Range) && R.IsKillable(t))
-            {
-                R.Cast(t, false, Config.Item("UsePackets").GetValue<bool>());
-            }
-        }
-
         private static bool RKillStealIsTargetInQ(Obj_AI_Hero target)
         {
-            if (_qObject != null)
-            {
-                if (target.Distance(_qObject.Position) < Q2.Range/2)
-                {
-                    return true;
-                }
-            }
-            return false;
+            if (_qObject == null) return false;
+            return target.Distance(_qObject.Position) < Q2.Range/2;
         }
     }
 }
