@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Linq;
 using LeagueSharp;
-using SharpDX;
 using LeagueSharp.Common;
-using System.Collections.Generic;
 
 namespace Tristana
 {
@@ -13,7 +11,7 @@ namespace Tristana
         public static Orbwalking.Orbwalker Orbwalker;
         public static Spell Q, W, E, R;
         public static Menu Config;
-        private static Obj_AI_Hero Player;
+        private static Obj_AI_Hero _player;
 
         public static void Main(string[] args)
         {
@@ -22,8 +20,8 @@ namespace Tristana
 
         private static void Game_OnGameLoad(EventArgs args)
         {
-            Player = ObjectManager.Player;
-            if (Player.BaseSkinName != ChampionName) return;
+            _player = ObjectManager.Player;
+            if (_player.BaseSkinName != ChampionName) return;
             Game.PrintChat("Loading 'Rocket Girl Tristana'...");
             Q = new Spell(SpellSlot.Q, 550);
             W = new Spell(SpellSlot.W, 900);
@@ -65,12 +63,10 @@ namespace Tristana
         private static void OnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
             var sender = gapcloser.Sender;
-            if (Config.Item("UseAntiGapcloser").GetValue<bool>() == true)
+            if (Config.Item("UseAntiGapcloser").GetValue<bool>() != true) return;
+            if (sender.IsValidTarget(R.Range))
             {
-                if (sender.IsValidTarget(R.Range))
-                {
-                    R.CastOnUnit(sender);
-                }
+                R.CastOnUnit(sender);
             }
         }
 
@@ -78,9 +74,9 @@ namespace Tristana
 
         private static void Game_OnGameUpdate(EventArgs args)
         {
-            Q.Range = 541 + 9 * (Player.Level - 1);
-            E.Range = 541 + 9 * (Player.Level - 1);
-            R.Range = 541 + 9 * (Player.Level - 1);
+            Q.Range = 541 + 9 * (_player.Level - 1);
+            E.Range = 541 + 9 * (_player.Level - 1);
+            R.Range = 541 + 9 * (_player.Level - 1);
             if (Config.Item("ComboActive").GetValue<KeyBind>().Active)
             {
                 Combo();
@@ -97,7 +93,6 @@ namespace Tristana
             var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Physical);
             if (target == null)
             {
-                return;
             }
             else
             {
@@ -109,18 +104,15 @@ namespace Tristana
         {
         }
 
-        private static void Orbwalking_AfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
+        public static void Orbwalking_AfterAttack(Obj_AI_Base unit, Obj_AI_Base target)
         {
         }
 
-        private static void CheckForExecute()
+        public static void CheckForExecute()
         {
-            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget(R.Range)))
+            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget(R.Range)).Where(enemy => R.IsReady() && R.IsKillable(enemy)))
             {
-                if (R.IsReady() && Damage.IsKillable(ObjectManager.Player, enemy, new[] { Tuple.Create<SpellSlot, int>(SpellSlot.R, 1)} ))
-                {
-                    R.CastOnUnit(enemy);
-                }
+                R.CastOnUnit(enemy);
             }
         }
 
@@ -130,21 +122,19 @@ namespace Tristana
             var useE = Config.Item("UseECombo").GetValue<bool>();
             var useR = Config.Item("UseRCombo").GetValue<bool>();
             var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Physical);
-            if (target == null)
+            if (target == null) return;
+            if (useQ && Q.IsReady())
             {
-                return;
+                Q.Cast();
             }
-            else
+            if (useE && E.IsReady())
             {
-                if (useQ && Q.IsReady()) { Q.Cast(); }
-                if (useE && E.IsReady()) { E.Cast(target); }
-                if (useR && R.IsReady())
-                {
-                    if (Damage.IsKillable(ObjectManager.Player, target, new[] { Tuple.Create<SpellSlot, int>(SpellSlot.R, 1) }))
-                    {
-                        R.CastOnUnit(target);
-                    }
-                }
+                E.Cast(target);
+            }
+            if (!useR || !R.IsReady()) return;
+            if (R.IsKillable(target))
+            {
+                R.CastOnUnit(target);
             }
         }
     }
