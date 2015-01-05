@@ -110,7 +110,8 @@ namespace Tristana
 
         public static void CheckForExecute()
         {
-            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget(R.Range)).Where(enemy => R.IsReady() && R.IsKillable(enemy)))
+            foreach (var enemy in 
+                         ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget(R.Range) && ObjectManager.Player.GetSpellDamage(enemy, SpellSlot.R) - 55 > enemy.Health))
             {
                 R.CastOnUnit(enemy);
             }
