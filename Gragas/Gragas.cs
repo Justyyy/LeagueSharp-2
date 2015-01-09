@@ -1,11 +1,10 @@
 ﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Input;
 using Gragas;
 using LeagueSharp;
 using LeagueSharp.Common;
-using SharpDX;
-using Color = System.Drawing.Color;
 
 namespace RollOutTheBarrel
 {
@@ -60,7 +59,7 @@ namespace RollOutTheBarrel
             {
                 miscMenu.AddItem(new MenuItem("UseRKillsteal", "Killsteal with R").SetValue(true));
                 miscMenu.AddItem(new MenuItem("UseEAntiGapcloser", "E on Gapclose (Incomplete)").SetValue(true));
-                miscMenu.AddItem(new MenuItem("InsecKey", "Insec Key").SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press)));
+                miscMenu.AddItem(new MenuItem("InsecKey", "Insec Key (Disabled)").SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press)));
                 miscMenu.AddItem(new MenuItem("UseRAntiGapcloser", "R on Gapclose (Incomplete)").SetValue(true));
                 miscMenu.AddItem(new MenuItem("UsePackets", "Use Packets").SetValue(false));
                 Config.AddSubMenu(miscMenu);
@@ -142,7 +141,7 @@ namespace RollOutTheBarrel
 
             if (Config.Item("InsecKey").GetValue<KeyBind>().Active)
             {
-                Insec(target);
+                //Insec(target);
             }
         }
 
@@ -279,11 +278,11 @@ namespace RollOutTheBarrel
 
         static bool RKillStealIsTargetInQ(Obj_AI_Hero target)
         {
-            return Bomb != null && target.Distance(Bomb.Position) < Bomb.BoundingRadius/2;
+            return Bomb != null && target.Distance(Bomb.Position) < Bomb.BoundingRadius / 2;
         }
 
         public static double BombMaxDamageTime { get; set; }
-        public static double BombCreateTime{ get; set; }
+        public static double BombCreateTime { get; set; }
 
         static float GetComboDamage(Obj_AI_Base target)
         {
@@ -354,21 +353,21 @@ namespace RollOutTheBarrel
         }
         static void Drawing_OnDraw(EventArgs args)
         {
-            var hppos = ObjectManager.Player.HPBarPosition;
-            var ppos = Drawing.WorldToScreen(ObjectManager.Player.Position);
-            Drawing.DrawText(ppos[0] - 80, ppos[1], Color.Green, Orbwalker.ActiveMode.ToString());
-            if (Keyboard.IsKeyDown(Key.T))
-            {
-                Drawing.DrawText(ppos[0] - 40, ppos[1], Color.Red, "INSEC ACTIVE");
-            }
-            if (Q.IsReady() && E.IsReady() && R.IsReady())
-            {
-                Drawing.DrawText(hppos[0] + 20, hppos[1] - 45, Color.LawnGreen, "Insec Ready");
-            }
-            else
-            {
-                Drawing.DrawText(hppos[0] + 20, hppos[1] - 45, Color.Red, "Insec Not Ready");
-            }
+            //var hppos = ObjectManager.Player.HPBarPosition;
+            //var ppos = Drawing.WorldToScreen(ObjectManager.Player.Position);
+            //Drawing.DrawText(ppos[0] - 80, ppos[1], Color.Green, Orbwalker.ActiveMode.ToString());
+            //if (Keyboard.IsKeyDown(Key.T))
+            //{
+            //    Drawing.DrawText(ppos[0] - 40, ppos[1], Color.Red, "INSEC ACTIVE");
+            //}
+            //if (Q.IsReady() && E.IsReady() && R.IsReady())
+            //{
+            //    Drawing.DrawText(hppos[0] + 20, hppos[1] - 45, Color.LawnGreen, "Insec Ready");
+            //}
+            //else
+            //{
+            //    Drawing.DrawText(hppos[0] + 20, hppos[1] - 45, Color.Red, "Insec Not Ready");
+            //}
 
         }
     }
