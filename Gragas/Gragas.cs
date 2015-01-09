@@ -210,7 +210,7 @@ namespace RollOutTheBarrel
             var useW = Config.Item("UseWCombo").GetValue<bool>();
             var useE = Config.Item("UseECombo").GetValue<bool>();
             var useR = Config.Item("UseRCombo").GetValue<bool>();
-            if (useW && W.IsReady())
+            if (useW && W.IsReady() && t.IsValidTarget(Q.Range))
             {
                 W.Cast();
             }
