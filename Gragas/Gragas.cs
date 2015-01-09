@@ -106,7 +106,7 @@ namespace RollOutTheBarrel
             GameObject.OnDelete += GameObject_OnDelete;
 
 
-            Game.PrintChat("Loaded RollOutTheBarrel!");
+            Game.PrintChat("<font color=\"#FF9966\">RollOutTheBarrel -</font> <font color=\"#FFFFFF\">Loaded</font>");
         }
         private static void OnCreateObject(GameObject sender, EventArgs args)
         {
