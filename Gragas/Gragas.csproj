@@ -59,7 +59,6 @@
   <ItemGroup>
     <Compile Include="DamageIndicator.cs" />
     <Compile Include="Gragas.cs" />
-    <Compile Include="OldGragas.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
