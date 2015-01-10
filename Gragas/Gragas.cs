@@ -368,9 +368,9 @@ namespace RollOutTheBarrel
         private static void Insec(Obj_AI_Hero t)
         {
             Orbwalking.Orbwalk(null, Game.CursorPos);
-            Vector3 castpoint = Player.Position.Extend(t.Position, Player.Distance(t) + 200);
-            if (R.IsInRange(castpoint))
-                R.Cast(castpoint);
+            InsecPoint = Player.Position.Extend(t.Position, Player.Distance(t) + 200);
+            if (R.IsInRange(InsecPoint))
+                R.Cast(InsecPoint);
             if (!Exploded) return;
             var ePos = t.Position;
             var qCastPos = UltPos.Extend(ePos, 750);
