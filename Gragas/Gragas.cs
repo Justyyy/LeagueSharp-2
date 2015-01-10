@@ -33,7 +33,6 @@ namespace RollOutTheBarrel
             E.SetSkillshot(0.3f, 50, 1000, true, SkillshotType.SkillshotLine);
             R.SetSkillshot(0.3f, 700, 1000, false, SkillshotType.SkillshotCircle);
             Config = new Menu("Gragas", ChampionName, true);
-            Game.PrintChat("Loading RollOutTheBarrel...");
             var targetSelectorMenu = new Menu("Target Selector", "Target Selector");
             TargetSelector.AddToMenu(targetSelectorMenu);
             Config.AddSubMenu(targetSelectorMenu);
