@@ -354,8 +354,6 @@ namespace RollOutTheBarrel
         {
             Orbwalking.Orbwalk(null, Game.CursorPos);
             var pred = Prediction.GetPrediction(t, R.Delay, R.Width, R.Speed);
-            if (Q.IsReady() && E.IsReady() && R.IsReady())
-            {
                 R.Cast(pred.CastPosition);
                 if (Exploded)
                 {
@@ -367,7 +365,6 @@ namespace RollOutTheBarrel
                         E.Cast(qCastPos);
                     });
                 }
-            }
         }
 
         public static bool Exploded { get; set; }
