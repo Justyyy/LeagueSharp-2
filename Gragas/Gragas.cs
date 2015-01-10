@@ -123,7 +123,7 @@ namespace RollOutTheBarrel
             {
                 Exploded = true;
                 UltPos = sender.Position;
-                Utility.DelayAction.Add(600, () => {Exploded = false;});
+                Utility.DelayAction.Add(1000, () => {Exploded = false;});
             }
             
         }
