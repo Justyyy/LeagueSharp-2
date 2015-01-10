@@ -17,6 +17,7 @@ namespace RollOutTheBarrel
         public static Menu Config;
         public static GameObject Bomb;
         public static Vector3 UltPos;
+        public static Vector3 InsecPoint;
 
         public Gragas()
         {
@@ -366,7 +367,7 @@ namespace RollOutTheBarrel
         private static void Insec(Obj_AI_Hero t)
         {
             Orbwalking.Orbwalk(null, Game.CursorPos);
-            var castpoint = Player.Position.Extend(t.Position, 200);
+            Vector3 castpoint = Player.Position.Extend(t.Position, Player.Distance(t) + 200);
             if (R.IsInRange(castpoint))
                 R.Cast(castpoint);
             if (!Exploded) return;
@@ -395,6 +396,7 @@ namespace RollOutTheBarrel
             //{
             //    Drawing.DrawText(hppos[0] + 20, hppos[1] - 45, Color.Red, "Insec Not Ready");
             //}
+            Drawing.DrawCircle(InsecPoint, 75, Color.Blue);
         }
     }
 }
