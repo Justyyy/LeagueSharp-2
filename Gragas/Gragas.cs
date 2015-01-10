@@ -141,7 +141,7 @@ namespace RollOutTheBarrel
 
             if (Config.Item("InsecKey").GetValue<KeyBind>().Active)
             {
-                //Insec(target);
+                Insec(target);
             }
         }
 
@@ -347,7 +347,7 @@ namespace RollOutTheBarrel
             if (Q.IsReady() && E.IsReady() && R.IsReady())
             {
                 R.Cast(pred.CastPosition);
-                Utility.DelayAction.Add(80,
+                Utility.DelayAction.Add(120,
                     delegate { E.Cast(pred.CastPosition); });
             }
         }
