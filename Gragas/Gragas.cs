@@ -372,8 +372,9 @@ namespace RollOutTheBarrel
             if (R.IsInRange(InsecPoint) && t.Distance(InsecPoint) < 350)
                 R.Cast(InsecPoint);
             if (!Exploded) return;
-            var ePos = t.Position;
-            var qCastPos = UltPos.Extend(ePos, 750);
+
+            var ePos = E.GetPrediction(t);
+            var qCastPos = ePos.CastPosition;//UltPos.Extend(ePos, 600);
             
             if (FirstQReady())
             {
