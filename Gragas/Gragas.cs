@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Windows.Input;
 using Gragas;
 using LeagueSharp;
 using LeagueSharp.Common;
@@ -9,7 +8,7 @@ using Color = System.Drawing.Color;
 
 namespace RollOutTheBarrel
 {
-    class Gragas
+    internal class Gragas
     {
         public static Obj_AI_Hero Player;
         public const string ChampionName = "Gragas";
@@ -24,7 +23,7 @@ namespace RollOutTheBarrel
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
         }
 
-        static void Game_OnGameLoad(EventArgs args)
+        private static void Game_OnGameLoad(EventArgs args)
         {
             Q = new Spell(SpellSlot.Q, 775);
             W = new Spell(SpellSlot.W, 0);
@@ -61,7 +60,9 @@ namespace RollOutTheBarrel
             {
                 miscMenu.AddItem(new MenuItem("UseRKillsteal", "Killsteal with R").SetValue(true));
                 miscMenu.AddItem(new MenuItem("UseEAntiGapcloser", "E on Gapclose (Incomplete)").SetValue(true));
-                miscMenu.AddItem(new MenuItem("InsecKey", "Insec Key (Disabled)").SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press)));
+                miscMenu.AddItem(
+                    new MenuItem("InsecKey", "Insec Key (Disabled)").SetValue(new KeyBind("T".ToCharArray()[0],
+                        KeyBindType.Press)));
                 miscMenu.AddItem(new MenuItem("UseRAntiGapcloser", "R on Gapclose (Incomplete)").SetValue(true));
                 miscMenu.AddItem(new MenuItem("UsePackets", "Use Packets").SetValue(false));
                 Config.AddSubMenu(miscMenu);
@@ -77,8 +78,10 @@ namespace RollOutTheBarrel
                 drawMenu.AddItem(new MenuItem("Draw_R", "Draw R").SetValue(true));
                 drawMenu.AddItem(new MenuItem("Draw_R_Killable", "Draw R Mark on Killable").SetValue(true));
 
-                MenuItem drawComboDamageMenu = new MenuItem("Draw_ComboDamage", "Draw Combo Damage").SetValue(true);
-                MenuItem drawFill = new MenuItem("Draw_Fill", "Draw Combo Damage Fill").SetValue(new Circle(true, Color.FromArgb(90, 255, 169, 4)));
+                var drawComboDamageMenu = new MenuItem("Draw_ComboDamage", "Draw Combo Damage").SetValue(true);
+                var drawFill =
+                    new MenuItem("Draw_Fill", "Draw Combo Damage Fill").SetValue(new Circle(true,
+                        Color.FromArgb(90, 255, 169, 4)));
                 drawMenu.AddItem(drawComboDamageMenu);
                 drawMenu.AddItem(drawFill);
                 DamageIndicator.DamageToUnit = GetComboDamage;
@@ -110,7 +113,8 @@ namespace RollOutTheBarrel
 
             Game.PrintChat("<font color=\"#FF9966\">RollOutTheBarrel -</font> <font color=\"#FFFFFF\">Loaded</font>");
         }
-        static void OnCreateObject(GameObject sender, EventArgs args)
+
+        private static void OnCreateObject(GameObject sender, EventArgs args)
         {
             if (sender.Name == "Gragas_Base_Q_Ally.troy")
             {
@@ -123,12 +127,11 @@ namespace RollOutTheBarrel
             {
                 Exploded = true;
                 UltPos = sender.Position;
-                Utility.DelayAction.Add(1000, () => {Exploded = false;});
+                Utility.DelayAction.Add(1000, () => { Exploded = false; });
             }
-            
         }
 
-        static void GameObject_OnDelete(GameObject sender, EventArgs args)
+        private static void GameObject_OnDelete(GameObject sender, EventArgs args)
         {
             if (sender.Name == "Gragas_Base_Q_Ally.troy")
             {
@@ -136,7 +139,7 @@ namespace RollOutTheBarrel
             }
         }
 
-        static void Game_OnGameUpdate(EventArgs args)
+        private static void Game_OnGameUpdate(EventArgs args)
         {
             var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
             if (Orbwalker.ActiveMode.ToString().ToLower() == "combo")
@@ -154,7 +157,7 @@ namespace RollOutTheBarrel
             }
         }
 
-        static bool FirstQReady()
+        private static bool FirstQReady()
         {
             if (Q.IsReady() && !ObjectManager.Player.HasBuff("GragasQ"))
             {
@@ -164,19 +167,19 @@ namespace RollOutTheBarrel
             return false;
         }
 
-        static bool SecondQReady()
+        private static bool SecondQReady()
         {
             return Q.IsReady() && ObjectManager.Player.HasBuff("GragasQ");
         }
 
-        static void ExplodeBarrel()
+        private static void ExplodeBarrel()
         {
             if (!BarrelIsCast) return;
             Q.Cast();
             BarrelIsCast = false;
         }
 
-        static void ThrowBarrel(Obj_AI_Hero tar, bool packet)
+        private static void ThrowBarrel(Obj_AI_Hero tar, bool packet)
         {
             if (BarrelIsCast) return;
             if (Q.Cast(tar, packet) == Spell.CastStates.SuccessfullyCasted)
@@ -187,7 +190,7 @@ namespace RollOutTheBarrel
 
         public static bool BarrelIsCast { get; set; }
 
-        static void Harass(Obj_AI_Hero t)
+        private static void Harass(Obj_AI_Hero t)
         {
             var useQ = Config.Item("UseQHarass").GetValue<bool>();
             if (useQ)
@@ -213,7 +216,7 @@ namespace RollOutTheBarrel
             }
         }
 
-        static void Combo(Obj_AI_Hero t)
+        private static void Combo(Obj_AI_Hero t)
         {
             var useQ = Config.Item("UseQCombo").GetValue<bool>();
             var useW = Config.Item("UseWCombo").GetValue<bool>();
@@ -277,7 +280,7 @@ namespace RollOutTheBarrel
                         }
                         else
                         {
-                            var pred = Prediction.GetPrediction(t, R.Delay, R.Width / 2, R.Speed);
+                            var pred = Prediction.GetPrediction(t, R.Delay, R.Width/2, R.Speed);
                             R.Cast(pred.CastPosition);
                         }
                     }
@@ -285,21 +288,21 @@ namespace RollOutTheBarrel
             }
         }
 
-        static bool RKillStealIsTargetInQ(Obj_AI_Hero target)
+        private static bool RKillStealIsTargetInQ(Obj_AI_Hero target)
         {
-            return Bomb != null && target.Distance(Bomb.Position) < Bomb.BoundingRadius / 2;
+            return Bomb != null && target.Distance(Bomb.Position) < Bomb.BoundingRadius/2;
         }
 
         public static double BombMaxDamageTime { get; set; }
         public static double BombCreateTime { get; set; }
 
-        static float GetComboDamage(Obj_AI_Base target)
+        private static float GetComboDamage(Obj_AI_Base target)
         {
             float comboDamage = 0;
             var abilityFlag = false;
-            bool hasSheen = false;
-            bool hasIceborn = false;
-            bool hasLichBane = false;
+            var hasSheen = false;
+            var hasIceborn = false;
+            var hasLichBane = false;
             if (ObjectManager.Player.InventoryItems.Any(item => item.DisplayName == "Sheen"))
             {
                 hasSheen = true;
@@ -318,55 +321,65 @@ namespace RollOutTheBarrel
 
             if (Q.IsReady())
             {
-                comboDamage += (float)ObjectManager.Player.GetSpellDamage(target, SpellSlot.Q);
+                comboDamage += (float) ObjectManager.Player.GetSpellDamage(target, SpellSlot.Q);
                 abilityFlag = true;
             }
             if (W.IsReady())
             {
-                comboDamage += (float)ObjectManager.Player.GetSpellDamage(target, SpellSlot.W);
+                comboDamage += (float) ObjectManager.Player.GetSpellDamage(target, SpellSlot.W);
                 abilityFlag = true;
             }
             if (E.IsReady())
             {
-                comboDamage += (float)ObjectManager.Player.GetSpellDamage(target, SpellSlot.E);
+                comboDamage += (float) ObjectManager.Player.GetSpellDamage(target, SpellSlot.E);
                 abilityFlag = true;
             }
             if (R.IsReady())
             {
-                comboDamage += (float)ObjectManager.Player.GetSpellDamage(target, SpellSlot.R);
+                comboDamage += (float) ObjectManager.Player.GetSpellDamage(target, SpellSlot.R);
                 abilityFlag = true;
             }
             if (hasLichBane && abilityFlag)
             {
-                comboDamage += (float)ObjectManager.Player.CalcDamage(target, Damage.DamageType.Magical, ObjectManager.Player.BaseAttackDamage * .75) + (float)(ObjectManager.Player.FlatMagicDamageMod * .50);
+                comboDamage +=
+                    (float)
+                        ObjectManager.Player.CalcDamage(target, Damage.DamageType.Magical,
+                            ObjectManager.Player.BaseAttackDamage*.75) +
+                    (float) (ObjectManager.Player.FlatMagicDamageMod*.50);
             }
             else if (hasIceborn && abilityFlag)
             {
-                comboDamage += (float)ObjectManager.Player.CalcDamage(target, Damage.DamageType.Physical, (ObjectManager.Player.BaseAttackDamage * 1.25));
+                comboDamage +=
+                    (float)
+                        ObjectManager.Player.CalcDamage(target, Damage.DamageType.Physical,
+                            (ObjectManager.Player.BaseAttackDamage*1.25));
             }
             else if (hasSheen && abilityFlag)
             {
-                comboDamage += (float)ObjectManager.Player.CalcDamage(target, Damage.DamageType.Physical, (ObjectManager.Player.BaseAttackDamage * 1));
+                comboDamage +=
+                    (float)
+                        ObjectManager.Player.CalcDamage(target, Damage.DamageType.Physical,
+                            (ObjectManager.Player.BaseAttackDamage*1));
             }
             return comboDamage;
         }
-        static void Insec(Obj_AI_Hero t)
+
+        private static void Insec(Obj_AI_Hero t)
         {
             Orbwalking.Orbwalk(null, Game.CursorPos);
-            var pred = Prediction.GetPrediction(t, R.Delay, R.Width, R.Speed);
-                R.Cast(pred.CastPosition);
-                if (Exploded)
-                {
-                    Vector3 ePos = t.Position;
-                    Vector3 qCastPos = UltPos.Extend(ePos, 700);
-                    Q.Cast(qCastPos);
-                    E.Cast(qCastPos);
-                }
+            var castpoint = Player.Position.Extend(t.Position, 200);
+            if (R.IsInRange(castpoint))
+                R.Cast(castpoint);
+            if (!Exploded) return;
+            var ePos = t.Position;
+            var qCastPos = UltPos.Extend(ePos, 750);
+            Q.Cast(qCastPos);
+            E.Cast(qCastPos);
         }
 
         public static bool Exploded { get; set; }
 
-        static void Drawing_OnDraw(EventArgs args)
+        private static void Drawing_OnDraw(EventArgs args)
         {
             //var hppos = ObjectManager.Player.HPBarPosition;
             //var ppos = Drawing.WorldToScreen(ObjectManager.Player.Position);
@@ -383,8 +396,6 @@ namespace RollOutTheBarrel
             //{
             //    Drawing.DrawText(hppos[0] + 20, hppos[1] - 45, Color.Red, "Insec Not Ready");
             //}
-
         }
     }
-
 }
