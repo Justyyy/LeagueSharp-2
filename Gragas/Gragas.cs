@@ -374,8 +374,25 @@ namespace RollOutTheBarrel
             if (!Exploded) return;
             var ePos = t.Position;
             var qCastPos = UltPos.Extend(ePos, 750);
-            Q.Cast(qCastPos);
-            E.Cast(qCastPos);
+            if (FirstQReady())
+            {
+                Q.Cast(qCastPos);
+                E.Cast(qCastPos);
+            }
+            if (SecondQReady())
+            {
+                if (t.IsMoving && t.Distance(Bomb.Position) < Bomb.BoundingRadius)
+                {
+                    ExplodeBarrel();
+                }
+                if ((Game.Time - BombMaxDamageTime) >= 0)
+                {
+                    if (Bomb != null && t.Distance(Bomb.Position) < Bomb.BoundingRadius)
+                    {
+                        ExplodeBarrel();
+                    }
+                }
+            }
         }
 
         public static bool Exploded { get; set; }
