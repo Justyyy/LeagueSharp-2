@@ -62,7 +62,7 @@ namespace RollOutTheBarrel
                 miscMenu.AddItem(new MenuItem("UseRKillsteal", "Killsteal with R").SetValue(true));
                 miscMenu.AddItem(new MenuItem("UseEAntiGapcloser", "E on Gapclose (Incomplete)").SetValue(true));
                 miscMenu.AddItem(
-                    new MenuItem("InsecKey", "Insec Key (Disabled)").SetValue(new KeyBind("T".ToCharArray()[0],
+                    new MenuItem("InsecKey", "Insec Key").SetValue(new KeyBind("T".ToCharArray()[0],
                         KeyBindType.Press)));
                 miscMenu.AddItem(new MenuItem("UseRAntiGapcloser", "R on Gapclose (Incomplete)").SetValue(true));
                 miscMenu.AddItem(new MenuItem("UsePackets", "Use Packets").SetValue(false));
