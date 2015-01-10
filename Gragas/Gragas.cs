@@ -128,7 +128,7 @@ namespace RollOutTheBarrel
             {
                 Exploded = true;
                 UltPos = sender.Position;
-                Utility.DelayAction.Add(1000, () => { Exploded = false; });
+                Utility.DelayAction.Add(3000, () => { Exploded = false; });
             }
         }
 
@@ -368,12 +368,13 @@ namespace RollOutTheBarrel
         private static void Insec(Obj_AI_Hero t)
         {
             Orbwalking.Orbwalk(null, Game.CursorPos);
-            InsecPoint = Player.Position.Extend(t.Position, Player.Distance(t) + 200);
-            if (R.IsInRange(InsecPoint))
+            InsecPoint = Player.Position.Extend(t.Position, Player.Distance(t) + 170);
+            if (R.IsInRange(InsecPoint) && t.Distance(InsecPoint) < 350)
                 R.Cast(InsecPoint);
             if (!Exploded) return;
             var ePos = t.Position;
             var qCastPos = UltPos.Extend(ePos, 750);
+            
             if (FirstQReady())
             {
                 Q.Cast(qCastPos);
