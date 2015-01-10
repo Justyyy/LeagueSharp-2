@@ -352,6 +352,7 @@ namespace RollOutTheBarrel
         }
         static void Insec(Obj_AI_Hero t)
         {
+            Orbwalking.Orbwalk(null, Game.CursorPos);
             var pred = Prediction.GetPrediction(t, R.Delay, R.Width, R.Speed);
             if (Q.IsReady() && E.IsReady() && R.IsReady())
             {
