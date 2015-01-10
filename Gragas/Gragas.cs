@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Input;
 using Gragas;
 using LeagueSharp;
 using LeagueSharp.Common;
+using SharpDX;
+using Color = System.Drawing.Color;
 
 namespace RollOutTheBarrel
 {
@@ -16,6 +17,7 @@ namespace RollOutTheBarrel
         public static Orbwalking.Orbwalker Orbwalker;
         public static Menu Config;
         public static GameObject Bomb;
+        public static Vector3 UltPos;
 
         public Gragas()
         {
@@ -108,7 +110,7 @@ namespace RollOutTheBarrel
 
             Game.PrintChat("<font color=\"#FF9966\">RollOutTheBarrel -</font> <font color=\"#FFFFFF\">Loaded</font>");
         }
-        private static void OnCreateObject(GameObject sender, EventArgs args)
+        static void OnCreateObject(GameObject sender, EventArgs args)
         {
             if (sender.Name == "Gragas_Base_Q_Ally.troy")
             {
@@ -117,7 +119,12 @@ namespace RollOutTheBarrel
                 BombMaxDamageTime = BombCreateTime + 2;
                 BarrelIsCast = true;
             }
-            if (sender.Name.Contains("Gragas")) { Game.PrintChat(sender.Name); }
+            if (sender.Name == "Gragas_Base_R_End.troy")
+            {
+                Exploded = true;
+                UltPos = sender.Position;
+                Utility.DelayAction.Add(600, () => {Exploded = false;});
+            }
             
         }
 
@@ -349,8 +356,16 @@ namespace RollOutTheBarrel
             if (Q.IsReady() && E.IsReady() && R.IsReady())
             {
                 R.Cast(pred.CastPosition);
-                Utility.DelayAction.Add(400,
-                    delegate { E.Cast(pred.CastPosition); });
+                if (Exploded)
+                {
+                    Vector3 ePos = t.Position;
+                    Vector3 qCastPos = UltPos.Extend(ePos, 700);
+                    Utility.DelayAction.Add(150, () =>
+                    {
+                        Q.Cast(qCastPos);
+                        E.Cast(qCastPos);
+                    });
+                }
             }
         }
 
