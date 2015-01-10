@@ -359,11 +359,8 @@ namespace RollOutTheBarrel
                 {
                     Vector3 ePos = t.Position;
                     Vector3 qCastPos = UltPos.Extend(ePos, 700);
-                    Utility.DelayAction.Add(150, () =>
-                    {
-                        Q.Cast(qCastPos);
-                        E.Cast(qCastPos);
-                    });
+                    Q.Cast(qCastPos);
+                    E.Cast(qCastPos);
                 }
         }
 
