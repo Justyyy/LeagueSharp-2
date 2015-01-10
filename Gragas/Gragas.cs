@@ -117,7 +117,8 @@ namespace RollOutTheBarrel
                 BombMaxDamageTime = BombCreateTime + 2;
                 BarrelIsCast = true;
             }
-            Game.PrintChat(sender.Name);
+            if (sender.Name.Contains("Gragas")) { Game.PrintChat(sender.Name); }
+            
         }
 
         static void GameObject_OnDelete(GameObject sender, EventArgs args)
