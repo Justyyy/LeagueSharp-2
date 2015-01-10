@@ -117,6 +117,7 @@ namespace RollOutTheBarrel
                 BombMaxDamageTime = BombCreateTime + 2;
                 BarrelIsCast = true;
             }
+            Game.PrintChat(sender.Name);
         }
 
         static void GameObject_OnDelete(GameObject sender, EventArgs args)
@@ -347,10 +348,13 @@ namespace RollOutTheBarrel
             if (Q.IsReady() && E.IsReady() && R.IsReady())
             {
                 R.Cast(pred.CastPosition);
-                Utility.DelayAction.Add(120,
+                Utility.DelayAction.Add(400,
                     delegate { E.Cast(pred.CastPosition); });
             }
         }
+
+        public static bool Exploded { get; set; }
+
         static void Drawing_OnDraw(EventArgs args)
         {
             //var hppos = ObjectManager.Player.HPBarPosition;
