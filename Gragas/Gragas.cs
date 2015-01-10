@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Windows.Input;
 using Gragas;
 using LeagueSharp;
 using LeagueSharp.Common;
@@ -381,21 +382,21 @@ namespace RollOutTheBarrel
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-            //var hppos = ObjectManager.Player.HPBarPosition;
-            //var ppos = Drawing.WorldToScreen(ObjectManager.Player.Position);
-            //Drawing.DrawText(ppos[0] - 80, ppos[1], Color.Green, Orbwalker.ActiveMode.ToString());
-            //if (Keyboard.IsKeyDown(Key.T))
-            //{
-            //    Drawing.DrawText(ppos[0] - 40, ppos[1], Color.Red, "INSEC ACTIVE");
-            //}
-            //if (Q.IsReady() && E.IsReady() && R.IsReady())
-            //{
-            //    Drawing.DrawText(hppos[0] + 20, hppos[1] - 45, Color.LawnGreen, "Insec Ready");
-            //}
-            //else
-            //{
-            //    Drawing.DrawText(hppos[0] + 20, hppos[1] - 45, Color.Red, "Insec Not Ready");
-            //}
+            var hppos = ObjectManager.Player.HPBarPosition;
+            var ppos = Drawing.WorldToScreen(ObjectManager.Player.Position);
+            Drawing.DrawText(ppos[0] - 80, ppos[1], Color.Green, Orbwalker.ActiveMode.ToString());
+            if (Keyboard.IsKeyDown(Key.T))
+            {
+                Drawing.DrawText(ppos[0] - 40, ppos[1], Color.Red, "INSEC ACTIVE");
+            }
+            if (Q.IsReady() && E.IsReady() && R.IsReady())
+            {
+                Drawing.DrawText(hppos[0] + 20, hppos[1] - 45, Color.LawnGreen, "Insec Ready");
+            }
+            else
+            {
+                Drawing.DrawText(hppos[0] + 20, hppos[1] - 45, Color.Red, "Insec Not Ready");
+            }
             Drawing.DrawCircle(InsecPoint, 75, Color.Blue);
         }
     }
