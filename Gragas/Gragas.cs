@@ -224,10 +224,8 @@ namespace RollOutTheBarrel
                 }
                 if (SecondQReady() && CurrentQTarget != null)
                 {
+                    if (TargetCloseToQEdge(CurrentQTarget)) ExplodeBarrel();
                     if (CurrentQTarget.IsMoving && TargetIsInQ(CurrentQTarget))
-                    {
-                        ExplodeBarrel();
-                    } if (Bomb != null && TargetIsInQ(CurrentQTarget))
                     {
                         ExplodeBarrel();
                     }
@@ -253,10 +251,8 @@ namespace RollOutTheBarrel
                 }
                 if (SecondQReady() && CurrentQTarget != null)
                 {
+                    if (TargetCloseToQEdge(CurrentQTarget)) ExplodeBarrel();
                     if (CurrentQTarget.IsMoving && TargetIsInQ(CurrentQTarget))
-                    {
-                        ExplodeBarrel();
-                    } if (Bomb != null && TargetIsInQ(CurrentQTarget))
                     {
                         ExplodeBarrel();
                     }
