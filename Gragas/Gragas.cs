@@ -213,6 +213,7 @@ namespace RollOutTheBarrel
             if (disTtoQ > qRadius) return false;
             return difference > 5 && difference < 40;
         }
+
         private static void Harass(Obj_AI_Hero t)
         {
             var useQ = Config.Item("UseQHarass").GetValue<bool>();
@@ -262,14 +263,14 @@ namespace RollOutTheBarrel
 
             if (useE && E.IsReady())
             {
-                if (E.WillHit(t, E.GetPrediction(t).CastPosition, 30))
+                if (t.IsValidTarget(E.Range))
                 {
-                    if (t.IsValidTarget(E.Range))
+                    if (E.WillHit(t, E.GetPrediction(t).CastPosition))
                     {
                         if (E.Cast(t) == Spell.CastStates.SuccessfullyCasted)
                         {
                             if (ObjectManager.Player.HasBuff("gragaswself"))
-                                ObjectManager.Player.IssueOrder(GameObjectOrder.AttackUnit, t);
+                                ObjectManager.Player.IssueOrder(GameObjectOrder.AutoAttack, t);
                         }
                     }
                 }
@@ -301,7 +302,7 @@ namespace RollOutTheBarrel
 
         private static bool RKillStealIsTargetInQ(Obj_AI_Hero target)
         {
-            return Bomb != null && target.Distance(Bomb.Position) < Bomb.BoundingRadius/2;
+            return Bomb != null && TargetIsInQ(target);
         }
 
         public static double BombMaxDamageTime { get; set; }
@@ -384,8 +385,8 @@ namespace RollOutTheBarrel
             if (!Exploded) return;
 
             var ePos = E.GetPrediction(t);
-            var qCastPos = ePos.CastPosition;//UltPos.Extend(ePos, 600);
-            
+            var qCastPos = ePos.CastPosition; //UltPos.Extend(ePos, 600);
+
             if (FirstQReady())
             {
                 Q.Cast(qCastPos);
