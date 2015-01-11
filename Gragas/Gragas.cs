@@ -19,6 +19,7 @@ namespace RollOutTheBarrel
         public static GameObject Bomb;
         public static Vector3 UltPos;
         public static Vector3 InsecPoint;
+        public static Obj_AI_Hero CurrentQTarget;
 
         public Gragas()
         {
@@ -160,7 +161,7 @@ namespace RollOutTheBarrel
 
         private static bool FirstQReady()
         {
-            if (Q.IsReady() && !ObjectManager.Player.HasBuff("GragasQ"))
+            if (Q.IsReady() && Bomb == null)
             {
                 BarrelIsCast = false;
                 return true;
@@ -170,7 +171,7 @@ namespace RollOutTheBarrel
 
         private static bool SecondQReady()
         {
-            return Q.IsReady() && ObjectManager.Player.HasBuff("GragasQ");
+            return Q.IsReady() && Bomb != null;
         }
 
         private static void ExplodeBarrel()
@@ -178,6 +179,7 @@ namespace RollOutTheBarrel
             if (!BarrelIsCast) return;
             Q.Cast();
             BarrelIsCast = false;
+            CurrentQTarget = null;
         }
 
         private static void ThrowBarrel(Obj_AI_Hero tar, bool packet)
@@ -186,11 +188,22 @@ namespace RollOutTheBarrel
             if (Q.Cast(tar, packet) == Spell.CastStates.SuccessfullyCasted)
             {
                 BarrelIsCast = true;
+                CurrentQTarget = tar;
             }
         }
 
         public static bool BarrelIsCast { get; set; }
 
+        public static bool TargetIsInQ(Obj_AI_Hero t)
+        {
+            var tPos = t.Position;
+            var qPos = Bomb.Position;
+            var qRadius = Bomb.BoundingRadius;
+            var disTtoQ = t.Distance(qPos);
+
+            if (disTtoQ > qRadius) return false;
+            return true;
+        }
         private static void Harass(Obj_AI_Hero t)
         {
             var useQ = Config.Item("UseQHarass").GetValue<bool>();
@@ -200,18 +213,14 @@ namespace RollOutTheBarrel
                 {
                     ThrowBarrel(t, Config.Item("UsePackets").GetValue<bool>());
                 }
-                if (SecondQReady())
+                if (SecondQReady() && CurrentQTarget != null)
                 {
-                    if (t.IsMoving && t.Distance(Bomb.Position) < Bomb.BoundingRadius)
+                    if (CurrentQTarget.IsMoving && TargetIsInQ(CurrentQTarget))
                     {
                         ExplodeBarrel();
-                    }
-                    if ((Game.Time - BombMaxDamageTime) >= 0)
+                    } if (Bomb != null && TargetIsInQ(CurrentQTarget))
                     {
-                        if (Bomb != null && t.Distance(Bomb.Position) < Bomb.BoundingRadius)
-                        {
-                            ExplodeBarrel();
-                        }
+                        ExplodeBarrel();
                     }
                 }
             }
@@ -233,18 +242,14 @@ namespace RollOutTheBarrel
                 {
                     ThrowBarrel(t, Config.Item("UsePackets").GetValue<bool>());
                 }
-                if (SecondQReady())
+                if (SecondQReady() && CurrentQTarget != null)
                 {
-                    if (t.IsMoving && t.Distance(Bomb.Position) < Bomb.BoundingRadius)
+                    if (CurrentQTarget.IsMoving && TargetIsInQ(CurrentQTarget))
                     {
                         ExplodeBarrel();
-                    }
-                    if ((Game.Time - BombMaxDamageTime) >= 0)
+                    } if (Bomb != null && TargetIsInQ(CurrentQTarget))
                     {
-                        if (Bomb != null && t.Distance(Bomb.Position) < Bomb.BoundingRadius)
-                        {
-                            ExplodeBarrel();
-                        }
+                        ExplodeBarrel();
                     }
                 }
             }
