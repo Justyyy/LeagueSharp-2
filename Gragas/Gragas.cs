@@ -196,13 +196,22 @@ namespace RollOutTheBarrel
 
         public static bool TargetIsInQ(Obj_AI_Hero t)
         {
-            var tPos = t.Position;
             var qPos = Bomb.Position;
             var qRadius = Bomb.BoundingRadius;
             var disTtoQ = t.Distance(qPos);
 
             if (disTtoQ > qRadius) return false;
             return true;
+        }
+
+        public static bool TargetCloseToQEdge(Obj_AI_Hero t)
+        {
+            var qPos = Bomb.Position;
+            var qRadius = Bomb.BoundingRadius;
+            var disTtoQ = t.Distance(qPos);
+            var difference = qRadius - disTtoQ;
+            if (disTtoQ > qRadius) return false;
+            return difference > 5 && difference < 40;
         }
         private static void Harass(Obj_AI_Hero t)
         {
