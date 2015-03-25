@@ -17,36 +17,12 @@ namespace ThreatMeter
             try
             {
                 Player = ObjectManager.Player;
-
+                
                 //Print the welcome message
                 Game.PrintChat("Threat Meter Loaded!");
 
                 //Load the menu.
                 Config = new Menu("ThreatMeter", "ThreatMeter", true);
-
-                //Add the target selector.
-                //TargetSelector.AddToMenu(Config.SubMenu("Selector"));
-
-                //Add the orbwalking.
-                //Orbwalker = new Orbwalking.Orbwalker(Config.SubMenu("Orbwalker"));
-
-                //Load the crosshair
-                //Crosshair.Load();
-
-                //Check if the champion is supported
-                //try
-                //{
-                //    var type = Type.GetType("ProSeries.Champions." + Player.ChampionName);
-                //    if (type != null)
-                //        type.GetMethod("Load").Invoke(null, null);
-                //}
-                //catch (NullReferenceException)
-                //{
-                //    Game.PrintChat(Player.ChampionName + " is not supported yet! however the orbwalking will work");
-                //}
-
-                //Add ADC items usage.
-                //ItemManager.Load();
 
                 //Add the menu as main menu.
                 Config.AddToMainMenu();
