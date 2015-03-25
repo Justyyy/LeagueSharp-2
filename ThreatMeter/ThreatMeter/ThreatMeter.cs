@@ -8,10 +8,10 @@ using LeagueSharp.Common;
 
 namespace ThreatMeter
 {
-    internal class ThreatMeter
+    internal class TM
     {
         private static Obj_AI_Hero _player;
-        public ThreatMeter()
+        public TM()
         {
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;    
         }
