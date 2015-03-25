@@ -1,0 +1,1 @@
+C:\Users\Alrik\Source\Repos\LeagueSharp\ThreatMeter\ThreatMeter\bin\Release\ThreatMeter.exe.config
