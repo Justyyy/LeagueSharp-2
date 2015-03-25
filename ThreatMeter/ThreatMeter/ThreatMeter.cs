@@ -41,7 +41,7 @@ namespace ThreatMeter
 
         private static void Game_OnGameUpdate(EventArgs args)
         {
-            Game.PrintChat("TEST");
+            //Game.PrintChat("TEST");
         }
     }
 }
