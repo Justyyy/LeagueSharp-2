@@ -10,7 +10,7 @@ namespace ThreatMeter
     {
         static void Main(string[] args)
         {
-            new Tm();
+            ThreatMeter.Load();
         }
     }
 }
