@@ -26,10 +26,24 @@ namespace ThreatMeter
 
                 //Add the menu as main menu.
                 Config.AddToMainMenu();
+                CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
+            }
+        }
+
+        private static void Game_OnGameLoad(EventArgs args)
+        {
+            Game.OnGameUpdate += Game_OnGameUpdate;
+        }
+
+        private static void Game_OnGameUpdate(EventArgs args)
+        {
+            if (Game.Time%2 == 0)
+            {
+                Game.PrintChat("Lol the time is divided by two evenly.");
             }
         }
     }
