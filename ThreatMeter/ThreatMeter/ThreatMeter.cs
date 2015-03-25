@@ -41,10 +41,7 @@ namespace ThreatMeter
 
         private static void Game_OnGameUpdate(EventArgs args)
         {
-            if (Game.Time%2 == 0)
-            {
-                Game.PrintChat("Lol the time is divided by two evenly.");
-            }
+            Game.PrintChat("TEST");
         }
     }
 }
