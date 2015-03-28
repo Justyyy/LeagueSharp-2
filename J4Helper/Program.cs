@@ -10,7 +10,7 @@ namespace J4Helper
     {
         static void Main(string[] args)
         {
-            new J4Helper();
+            new J4();
         }
     }
 }
