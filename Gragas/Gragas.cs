@@ -107,7 +107,7 @@ namespace RollOutTheBarrel
             Config.AddToMainMenu();
 
             Player = ObjectManager.Player;
-            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.OnUpdate += Game_OnGameUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
             GameObject.OnCreate += OnCreateObject;
             GameObject.OnDelete += GameObject_OnDelete;
