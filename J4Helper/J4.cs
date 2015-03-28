@@ -51,7 +51,7 @@ namespace J4Helper
 
         private static void FlagSwag()
         {
-            if (Config.Item("EQMouse").GetValue<bool>() && Q.IsReady() && Q.IsReady())
+            if (Q.IsReady() && Q.IsReady())
             {
                 Game.PrintChat("test");
                 E.Cast(Game.CursorPos);
