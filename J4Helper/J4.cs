@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Linq;
+using System.Drawing;
 using LeagueSharp;
 using LeagueSharp.Common;
-using SharpDX;
-using Color = System.Drawing.Color;
 
 namespace J4Helper
 {
@@ -47,10 +45,8 @@ namespace J4Helper
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-            Drawing.DrawText(Player.HPBarPosition.X + 5, Player.HPBarPosition.Y + 30, Color.NavajoWhite, "Shield: {0}", GetPossibleShieldAmount());
-            Drawing.DrawText(Player.HPBarPosition.X + 5, Player.HPBarPosition.Y + 50, Color.NavajoWhite, "maxShield: {0}", maxShield());
-            Drawing.DrawText(Player.HPBarPosition.X + 5, Player.HPBarPosition.Y + 70, Color.NavajoWhite, "baseShield: {0}", baseShield());
-            Drawing.DrawText(Player.HPBarPosition.X + 5, Player.HPBarPosition.Y + 90, Color.NavajoWhite, "baseExtraShield: {0}", baseShield());
+            Drawing.DrawText(Player.HPBarPosition.X - 40, Player.HPBarPosition.Y + 30, Color.NavajoWhite, "Shield: {0}",
+                GetPossibleShieldAmount());
         }
 
         private static void Game_OnUpdate(EventArgs args)
@@ -63,47 +59,22 @@ namespace J4Helper
 
         private static void FlagSwag()
         {
-            if (Q.IsReady() && Q.IsReady())
-            {
-                E.Cast(Game.CursorPos);
-                Q.Cast(Game.CursorPos);
-            }
+            if (!Q.IsReady() || !Q.IsReady()) return;
+            E.Cast(Game.CursorPos);
+            Q.Cast(Game.CursorPos);
         }
 
         private static int GetPossibleShieldAmount()
         {
-            
-            int level = E.Level;
-            int maxShield = 150 + (90*(level));
-            
-            int baseShield = 50 + (40*(level));
-            int baseExtraShield = 20 + (10*(level));
-            int enemyCount = Player.CountEnemiesInRange(E.Range);
-            int shieldAmount = baseShield + baseExtraShield*enemyCount;
+            var level = E.Level;
+            var maxShield = 150 + (90*(level));
+
+            var baseShield = 50 + (40*(level));
+            var baseExtraShield = 20 + (10*(level));
+            var enemyCount = Player.CountEnemiesInRange(E.Range);
+            var shieldAmount = baseShield + baseExtraShield*enemyCount;
             if (shieldAmount > maxShield) return maxShield;
             return shieldAmount;
-        }
-
-        private static int maxShield()
-        {
-
-            int level = E.Level;
-            return 150 + (90 * (level));
-        }
-
-        private static int baseShield()
-        {
-
-            int level = E.Level;
-            return 50 + (40 * (level));
-        }
-
-        private static int baseExtraShield()
-        {
-
-            int level = E.Level;
-
-            return 20 + (10 * (level));
         }
     }
 }
