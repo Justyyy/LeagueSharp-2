@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
+using SharpDX;
 
 namespace J4Helper
 {
@@ -38,7 +40,13 @@ namespace J4Helper
                     new MenuItem("EQMouse", "EQ to Mouse").SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press)));
             Config.AddToMainMenu();
             Game.OnUpdate += Game_OnUpdate;
+            Drawing.OnDraw += Drawing_OnDraw;
             Game.PrintChat("J4Helper Loaded.");
+        }
+
+        private static void Drawing_OnDraw(EventArgs args)
+        {
+            Drawing.DrawText(Player.Position.X, Player.Position.Y, System.Drawing.Color.Orange, "Shield: {0}", GetPossibleShieldAmount());
         }
 
         private static void Game_OnUpdate(EventArgs args)
@@ -56,6 +64,19 @@ namespace J4Helper
                 E.Cast(Game.CursorPos);
                 Q.Cast(Game.CursorPos);
             }
+        }
+
+        private static int GetPossibleShieldAmount()
+        {
+            
+            int level = E.Level;
+            int maxShield = 150 + (90*level - 1);
+            int baseShield = 50 + (40*level - 1);
+            int baseExtraShield = 20 + (10*level - 1);
+            int enemyCount = Player.CountEnemiesInRange(E.Range);
+            int shieldAmount = baseShield + baseExtraShield*enemyCount;
+            if (shieldAmount > maxShield) return maxShield;
+            return shieldAmount;
         }
     }
 }
