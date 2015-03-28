@@ -24,6 +24,7 @@ namespace J4Helper
 
         private static void Game_OnGameLoad(EventArgs args)
         {
+            Config = new Menu("J4Helper", "J4Helper", true);
             //Orbwalker
             Config.AddSubMenu(new Menu("Orbwalking", "Orbwalking"));
             Orbwalker = new Orbwalking.Orbwalker(Config.SubMenu("Orbwalking"));
