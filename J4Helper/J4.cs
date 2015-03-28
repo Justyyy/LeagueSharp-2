@@ -48,6 +48,9 @@ namespace J4Helper
         private static void Drawing_OnDraw(EventArgs args)
         {
             Drawing.DrawText(Player.HPBarPosition.X + 5, Player.HPBarPosition.Y + 30, Color.NavajoWhite, "Shield: {0}", GetPossibleShieldAmount());
+            Drawing.DrawText(Player.HPBarPosition.X + 5, Player.HPBarPosition.Y + 50, Color.NavajoWhite, "maxShield: {0}", maxShield());
+            Drawing.DrawText(Player.HPBarPosition.X + 5, Player.HPBarPosition.Y + 70, Color.NavajoWhite, "baseShield: {0}", baseShield());
+            Drawing.DrawText(Player.HPBarPosition.X + 5, Player.HPBarPosition.Y + 90, Color.NavajoWhite, "baseExtraShield: {0}", baseShield());
         }
 
         private static void Game_OnUpdate(EventArgs args)
@@ -72,12 +75,35 @@ namespace J4Helper
             
             int level = E.Level;
             int maxShield = 150 + (90*(level - 1));
+            
             int baseShield = 50 + (40*(level - 1));
             int baseExtraShield = 20 + (10*(level - 1));
             int enemyCount = Player.CountEnemiesInRange(E.Range);
             int shieldAmount = baseShield + baseExtraShield*enemyCount;
             if (shieldAmount > maxShield) return maxShield;
             return shieldAmount;
+        }
+
+        private static int maxShield()
+        {
+
+            int level = E.Level;
+            return 150 + (90 * (level - 1));
+        }
+
+        private static int baseShield()
+        {
+
+            int level = E.Level;
+            return 50 + (40 * (level - 1));
+        }
+
+        private static int baseExtraShield()
+        {
+
+            int level = E.Level;
+
+            return 20 + (10 * (level - 1));
         }
     }
 }
