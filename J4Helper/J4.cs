@@ -37,6 +37,7 @@ namespace J4Helper
                     new MenuItem("EQMouse", "EQ to Mouse").SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press)));
             Config.AddToMainMenu();
             Game.OnUpdate += Game_OnUpdate;
+            Game.PrintChat("J4Helper Loaded.");
         }
 
         private static void Game_OnUpdate(EventArgs args)
@@ -49,6 +50,7 @@ namespace J4Helper
 
         private static void FlagSwag()
         {
+            Game.PrintChat("test");
             if (Config.Item("UseEQF").GetValue<bool>() && Q.IsReady() && Q.IsReady())
             {
                 E.Cast(Game.CursorPos);
