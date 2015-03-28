@@ -47,7 +47,7 @@ namespace J4Helper
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-            Drawing.DrawText(Player.HPBarPosition.X + 5, Player.HPBarPosition.Y + 5, Color.Crimson, "Shield: {0}", GetPossibleShieldAmount());
+            Drawing.DrawText(Player.HPBarPosition.X + 5, Player.HPBarPosition.Y + 30, Color.Crimson, "Shield: {0}", GetPossibleShieldAmount());
         }
 
         private static void Game_OnUpdate(EventArgs args)
