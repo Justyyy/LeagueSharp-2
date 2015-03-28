@@ -53,6 +53,7 @@ namespace J4Helper
         {
             if (Config.Item("EQMouse").GetValue<bool>() && Q.IsReady() && Q.IsReady())
             {
+                Game.PrintChat("test");
                 E.Cast(Game.CursorPos);
                 Q.Cast(Game.CursorPos);
             }
