@@ -71,9 +71,9 @@ namespace J4Helper
         {
             
             int level = E.Level;
-            int maxShield = 150 + (90*level - 1);
-            int baseShield = 50 + (40*level - 1);
-            int baseExtraShield = 20 + (10*level - 1);
+            int maxShield = 150 + (90*(level - 1));
+            int baseShield = 50 + (40*(level - 1));
+            int baseExtraShield = 20 + (10*(level - 1));
             int enemyCount = Player.CountEnemiesInRange(E.Range);
             int shieldAmount = baseShield + baseExtraShield*enemyCount;
             if (shieldAmount > maxShield) return maxShield;
