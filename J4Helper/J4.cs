@@ -74,10 +74,10 @@ namespace J4Helper
         {
             
             int level = E.Level;
-            int maxShield = 150 + (90*(level - 1));
+            int maxShield = 150 + (90*(level));
             
-            int baseShield = 50 + (40*(level - 1));
-            int baseExtraShield = 20 + (10*(level - 1));
+            int baseShield = 50 + (40*(level));
+            int baseExtraShield = 20 + (10*(level));
             int enemyCount = Player.CountEnemiesInRange(E.Range);
             int shieldAmount = baseShield + baseExtraShield*enemyCount;
             if (shieldAmount > maxShield) return maxShield;
@@ -88,14 +88,14 @@ namespace J4Helper
         {
 
             int level = E.Level;
-            return 150 + (90 * (level - 1));
+            return 150 + (90 * (level));
         }
 
         private static int baseShield()
         {
 
             int level = E.Level;
-            return 50 + (40 * (level - 1));
+            return 50 + (40 * (level));
         }
 
         private static int baseExtraShield()
@@ -103,7 +103,7 @@ namespace J4Helper
 
             int level = E.Level;
 
-            return 20 + (10 * (level - 1));
+            return 20 + (10 * (level));
         }
     }
 }
