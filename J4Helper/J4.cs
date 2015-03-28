@@ -19,11 +19,8 @@ namespace J4Helper
 
         private static void Game_OnGameLoad(EventArgs args)
         {
-            if (Player.ChampionName != "JarvanIV")
-            {
-                Game.PrintChat(Player.ChampionName);
-                return;
-            }
+            Player = ObjectManager.Player;
+            if (Player.ChampionName != "jarvanIV") return;
             Q = new Spell(SpellSlot.Q, 700f);
             Q.SetSkillshot(0.5f, 70f, float.MaxValue, false, SkillshotType.SkillshotLine);
 
