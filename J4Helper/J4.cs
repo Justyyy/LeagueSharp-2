@@ -53,7 +53,6 @@ namespace J4Helper
         {
             if (Q.IsReady() && Q.IsReady())
             {
-                Game.PrintChat("test");
                 E.Cast(Game.CursorPos);
                 Q.Cast(Game.CursorPos);
             }
