@@ -52,6 +52,10 @@ namespace J4Helper
 
         private static void Game_OnUpdate(EventArgs args)
         {
+            if (GetPossibleShieldAmount() == MaxShield)
+            {
+                W.Cast();
+            }
             if (Config.Item("EQMouse").IsActive())
             {
                 FlagSwag();
@@ -68,13 +72,20 @@ namespace J4Helper
         private static int GetPossibleShieldAmount()
         {
             var level = W.Level;
-            var maxShield = 150 + (90*(level - 1));
 
             var baseShield = 50 + (40*(level - 1));
             var baseExtraShield = 20 + (10*(level - 1));
             var enemyCount = Player.CountEnemiesInRange(W.Range);
             var shieldAmount = baseShield + baseExtraShield*enemyCount;
-            return shieldAmount > maxShield ? maxShield : shieldAmount;
+            return shieldAmount > MaxShield ? MaxShield : shieldAmount;
+        }
+
+        private static int MaxShield
+        {
+            get
+            {
+                return 150 + (90 * (W.Level - 1));
+            }
         }
     }
 }
