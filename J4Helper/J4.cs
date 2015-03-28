@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LeagueSharp;
 using LeagueSharp.Common;
-using SharpDX;
 
 namespace J4Helper
 {
@@ -26,7 +21,10 @@ namespace J4Helper
         {
             if (Player.ChampionName != "JarvanIV") return;
             Q = new Spell(SpellSlot.Q, 700f);
+            Q.SetSkillshot(0.5f, 70f, float.MaxValue, false, SkillshotType.SkillshotLine);
+
             E = new Spell(SpellSlot.E, 830f);
+            E.SetSkillshot(0.5f, 70f, float.MaxValue, false, SkillshotType.SkillshotCircle);
             Config = new Menu("J4Helper", "J4Helper", true);
             //Orbwalker
             Config.AddSubMenu(new Menu("Orbwalking", "Orbwalking"));
@@ -55,7 +53,5 @@ namespace J4Helper
             E.Cast(Game.CursorPos);
             Q.Cast(Game.CursorPos);
         }
-
-        
     }
 }
