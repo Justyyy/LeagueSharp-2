@@ -45,7 +45,7 @@ namespace J4Helper
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-            Drawing.DrawText(Player.HPBarPosition.X - 40, Player.HPBarPosition.Y + 30, Color.NavajoWhite, "Shield: {0}",
+            Drawing.DrawText(Player.HPBarPosition.X + 40, Player.HPBarPosition.Y + 30, Color.NavajoWhite, "Shield: {0}",
                 GetPossibleShieldAmount());
         }
 
