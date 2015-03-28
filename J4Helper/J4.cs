@@ -33,7 +33,7 @@ namespace J4Helper
             Config.SubMenu("Keys")
                 .AddItem(
                     new MenuItem("EQMouse", "EQ to Mouse").SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press)));
-
+            Config.AddToMainMenu();
             Game.OnUpdate += Game_OnUpdate;
         }
 
