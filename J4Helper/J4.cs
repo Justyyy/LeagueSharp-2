@@ -66,15 +66,14 @@ namespace J4Helper
 
         private static int GetPossibleShieldAmount()
         {
-            var level = E.Level;
-            var maxShield = 150 + (90*(level));
+            var level = W.Level;
+            var maxShield = 150 + (90*(level - 1));
 
-            var baseShield = 50 + (40*(level));
-            var baseExtraShield = 20 + (10*(level));
-            var enemyCount = Player.CountEnemiesInRange(E.Range);
+            var baseShield = 50 + (40*(level - 1));
+            var baseExtraShield = 20 + (10*(level - 1));
+            var enemyCount = Player.CountEnemiesInRange(W.Range);
             var shieldAmount = baseShield + baseExtraShield*enemyCount;
-            if (shieldAmount > maxShield) return maxShield;
-            return shieldAmount;
+            return shieldAmount > maxShield ? maxShield : shieldAmount;
         }
     }
 }
