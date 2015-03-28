@@ -20,7 +20,7 @@ namespace J4Helper
         private static void Game_OnGameLoad(EventArgs args)
         {
             Player = ObjectManager.Player;
-            if (Player.ChampionName != "jarvanIV") return;
+            if (Player.ChampionName != ChampionName) return;
             Q = new Spell(SpellSlot.Q, 700f);
             Q.SetSkillshot(0.5f, 70f, float.MaxValue, false, SkillshotType.SkillshotLine);
 
