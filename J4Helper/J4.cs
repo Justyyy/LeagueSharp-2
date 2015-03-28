@@ -43,6 +43,15 @@ namespace J4Helper
             Game.OnUpdate += Game_OnUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
             Game.PrintChat("J4Helper Loaded.");
+            Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
+        }
+
+        private static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            /*if (args.Target.Equals(Player))
+            {
+                args.SData.
+            }*/
         }
 
         private static void Drawing_OnDraw(EventArgs args)
@@ -87,5 +96,7 @@ namespace J4Helper
                 return 150 + (90 * (W.Level - 1));
             }
         }
+
+
     }
 }
