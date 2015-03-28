@@ -37,11 +37,17 @@ namespace ThreatMeter
         private static void Game_OnGameLoad(EventArgs args)
         {
             Game.OnGameUpdate += Game_OnGameUpdate;
+            Drawing.OnDraw += Drawing_OnDraw;
         }
 
         private static void Game_OnGameUpdate(EventArgs args)
         {
-            //Game.PrintChat("TEST");
+            
+        }
+
+        private static void Drawing_OnDraw(EventArgs args)
+        {
+            
         }
     }
 }
