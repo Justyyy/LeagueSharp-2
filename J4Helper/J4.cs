@@ -25,6 +25,8 @@ namespace J4Helper
             Q = new Spell(SpellSlot.Q, 700f);
             Q.SetSkillshot(0.5f, 70f, float.MaxValue, false, SkillshotType.SkillshotLine);
 
+            W = new Spell(SpellSlot.W, 300f);
+
             E = new Spell(SpellSlot.E, 830f);
             E.SetSkillshot(0.5f, 70f, float.MaxValue, false, SkillshotType.SkillshotCircle);
             Config = new Menu("J4Helper", "J4Helper", true);
@@ -45,8 +47,7 @@ namespace J4Helper
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-            Drawing.DrawText(Player.HPBarPosition.X + 40, Player.HPBarPosition.Y + 30, Color.NavajoWhite, "Shield: {0}",
-                GetPossibleShieldAmount());
+            Drawing.DrawText(Player.HPBarPosition.X + 40, Player.HPBarPosition.Y + 30, Color.NavajoWhite, "Shield: {0}", GetPossibleShieldAmount());
         }
 
         private static void Game_OnUpdate(EventArgs args)
