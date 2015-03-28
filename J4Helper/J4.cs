@@ -9,7 +9,7 @@ using SharpDX;
 
 namespace J4Helper
 {
-    internal class J4Helper
+    internal class J4
     {
         public static Obj_AI_Hero Player;
         public const string ChampionName = "JarvanIV";
@@ -17,7 +17,7 @@ namespace J4Helper
         public static Orbwalking.Orbwalker Orbwalker;
         public static Menu Config;
 
-        public J4Helper()
+        public J4()
         {
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
         }
