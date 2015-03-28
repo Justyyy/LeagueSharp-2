@@ -1,2 +1,13 @@
 C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\J4Helper\bin\Debug\J4Helper.exe.config
 C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\bin\Debug\J4Helper.exe.config
+C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\bin\Debug\J4Helper.exe
+C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\bin\Debug\J4Helper.pdb
+C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\bin\Debug\LeagueSharp.Common.dll
+C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\bin\Debug\LeagueSharp.dll
+C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\bin\Debug\SharpDX.Direct3D9.dll
+C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\bin\Debug\SharpDX.dll
+C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\bin\Debug\clipper_library.dll
+C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\bin\Debug\LeagueSharp.xml
+C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\obj\Debug\J4Helper.csprojResolveAssemblyReference.cache
+C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\obj\Debug\J4Helper.exe
+C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\obj\Debug\J4Helper.pdb
