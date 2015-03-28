@@ -1,1 +1,2 @@
 C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\J4Helper\bin\Debug\J4Helper.exe.config
+C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\bin\Debug\J4Helper.exe.config
