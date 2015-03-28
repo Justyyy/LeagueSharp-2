@@ -24,6 +24,9 @@ namespace J4Helper
 
         private static void Game_OnGameLoad(EventArgs args)
         {
+            if (Player.ChampionName != "JarvanIV") return;
+            Q = new Spell(SpellSlot.Q, 700f);
+            E = new Spell(SpellSlot.E, 830f);
             Config = new Menu("J4Helper", "J4Helper", true);
             //Orbwalker
             Config.AddSubMenu(new Menu("Orbwalking", "Orbwalking"));
