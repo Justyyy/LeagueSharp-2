@@ -49,9 +49,11 @@ namespace J4Helper
 
         private static void FlagSwag()
         {
-            if (!Config.Item("UseEQF").GetValue<bool>() || !Q.IsReady() || !Q.IsReady()) return;
-            E.Cast(Game.CursorPos);
-            Q.Cast(Game.CursorPos);
+            if (Config.Item("UseEQF").GetValue<bool>() && Q.IsReady() && Q.IsReady())
+            {
+                E.Cast(Game.CursorPos);
+                Q.Cast(Game.CursorPos);
+            }
         }
     }
 }
