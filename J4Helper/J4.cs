@@ -74,9 +74,11 @@ namespace J4Helper
         private static void FlagSwag()
         {
             var cursorPos = Game.CursorPos;
+            Orbwalker.SetMovement(false);
             if (!Q.IsReady() || !Q.IsReady()) return;
             E.Cast(cursorPos);
             Utility.DelayAction.Add(5, () => { Q.Cast(cursorPos); });
+            Orbwalker.SetMovement(true);
         }
 
         private static int GetPossibleShieldAmount()
