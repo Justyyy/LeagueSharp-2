@@ -1,0 +1,11 @@
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Release\Tristana.exe.config
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Release\Tristana.exe
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Release\Tristana.pdb
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Release\LeagueSharp.Common.dll
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Release\LeagueSharp.dll
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Release\SharpDX.dll
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Release\SharpDX.Direct3D9.dll
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Release\clipper_library.dll
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Release\LeagueSharp.xml
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\obj\Release\Tristana.exe
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\obj\Release\Tristana.pdb
