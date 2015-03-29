@@ -13,6 +13,7 @@ namespace Tristana
         public static Spell Q, W, E, R;
         public static Menu Config;
         private static Obj_AI_Hero _player;
+        public static float EStacks { get; set; }
 
         public static void Main(string[] args)
         {
@@ -88,6 +89,7 @@ namespace Tristana
 
             AntiGapcloser.OnEnemyGapcloser += OnEnemyGapcloser;
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Hero_OnProcessSpellCast;
+            Obj_AI_Base.On
             Game.OnUpdate += Game_OnGameUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
             Orbwalking.BeforeAttack += Orbwalking_BeforeAttack;
@@ -98,22 +100,35 @@ namespace Tristana
 
         private static void Obj_AI_Hero_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
-            if (sender.Equals(_player))
+            if (args.SData.Name == "TristanaE")
             {
-                Game.PrintChat(args.SData.Name);
+                EActive = true;
             }
-            Game.PrintChat(args.SData.Name);
+            if (args.SData.Name == "TristanaBasicAttack" && args.Target.Equals(CurrentETarget))
+            {
+                EStacks += 0.25f;
+            }
+            if (E.IsReady())
+            {
+                EStacks = 1.0f;
+            }
         }
+
+        public static bool EActive { get; set; }
 
         private static float GetComboDamage(Obj_AI_Hero hero)
         {
             float comboDamage = 0;
+            double baseEDamage = ((60 + ((E.Level - 1)*10)) + ((50 + ((E.Level - 1)*15))*_player.TotalAttackDamage) + (_player.TotalMagicalDamage * 0.5));
             if (hero.HasBuff("tristanaechargesound"))
             {
-                
+                CurrentETarget = hero;
+                comboDamage += Convert.ToSingle(_player.CalcDamage(hero, Damage.DamageType.Physical, baseEDamage))*EStacks;
             }
             return comboDamage;
         }
+
+        public static Obj_AI_Hero CurrentETarget { get; set; }
 
         private static void Drawing_OnDraw(EventArgs args)
         {
