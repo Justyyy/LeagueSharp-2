@@ -53,7 +53,7 @@ namespace Tristana
 
             AntiGapcloser.OnEnemyGapcloser += OnEnemyGapcloser;
 
-            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.OnUpdate += Game_OnGameUpdate;
             Orbwalking.BeforeAttack += Orbwalking_BeforeAttack;
             Config.AddToMainMenu();
             Game.PrintChat("'Rocket Girl Tristana' Loaded!");

@@ -1,1 +1,13 @@
 C:\Users\Alrik\Documents\GitHub\LeagueSharp\Tristana\bin\Debug\Tristana.exe.config
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Debug\Tristana.exe.config
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Debug\Tristana.exe
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Debug\Tristana.pdb
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Debug\LeagueSharp.Common.dll
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Debug\LeagueSharp.dll
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Debug\SharpDX.dll
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Debug\SharpDX.Direct3D9.dll
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Debug\clipper_library.dll
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\bin\Debug\LeagueSharp.xml
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\obj\Debug\Tristana.csprojResolveAssemblyReference.cache
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\obj\Debug\Tristana.exe
+C:\Users\Alrik\Source\Repos\LeagueSharp\Tristana\obj\Debug\Tristana.pdb
