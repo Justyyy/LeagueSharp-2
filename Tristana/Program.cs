@@ -87,7 +87,7 @@ namespace Tristana
             }
 
             AntiGapcloser.OnEnemyGapcloser += OnEnemyGapcloser;
-            
+            Obj_AI_Hero.OnProcessSpellCast += Obj_AI_Hero_OnProcessSpellCast;
             Game.OnUpdate += Game_OnGameUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
             Orbwalking.BeforeAttack += Orbwalking_BeforeAttack;
@@ -96,9 +96,21 @@ namespace Tristana
 
         }
 
+        private static void Obj_AI_Hero_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            if (sender.Equals(_player))
+            {
+                Game.PrintChat(args.SData.Name);
+            }
+        }
+
         private static float GetComboDamage(Obj_AI_Hero hero)
         {
             float comboDamage = 0;
+            if (hero.HasBuff("tristanaechargesound"))
+            {
+                
+            }
             return comboDamage;
         }
 
