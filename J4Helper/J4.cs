@@ -75,9 +75,12 @@ namespace J4Helper
         {
             var cursorPos = Game.CursorPos;
             Orbwalker.SetMovement(false);
-            if (!Q.IsReady() || !Q.IsReady()) return;
-            E.Cast(cursorPos);
-            Utility.DelayAction.Add(5, () => { Q.Cast(cursorPos); });
+            if (Q.IsReady() && E.IsReady())
+            {
+                E.Cast(cursorPos);
+                Utility.DelayAction.Add(5, () => { Q.Cast(cursorPos); });
+                
+            }
             Orbwalker.SetMovement(true);
         }
 
