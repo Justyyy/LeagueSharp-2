@@ -140,8 +140,8 @@ namespace Tristana
             //                   //(_player.TotalMagicalDamage*0.5));
             //var phyDam = ((1 + (50 + ((E.Level - 1)*15)/100))*_player.TotalAttackDamage);
             //var phyDam2 = ((1 + (50 + (E.Level - 1)*15)/100)*_player.TotalAttackDamage);
-            //Drawing.DrawText(_player.HPBarPosition.X + 40, _player.HPBarPosition.Y + 30, Color.Aquamarine, "E Damage: {0}", baseEDamage);
-            Drawing.DrawText(_player.HPBarPosition.X + 40, _player.HPBarPosition.Y + 60, Color.Aquamarine, "EStacks: {0}", EStacks);
+            Drawing.DrawText(_player.HPBarPosition.X + 40, _player.HPBarPosition.Y + 30, Color.Aquamarine, "E Target: {0}", CurrentETarget.ChampionName);
+            Drawing.DrawText(_player.HPBarPosition.X + 40, _player.HPBarPosition.Y + 60, Color.Aquamarine, "E Stacks: {0}", EStacks);
 
         }
 
