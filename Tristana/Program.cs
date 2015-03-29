@@ -125,7 +125,7 @@ namespace Tristana
             {
                 foreach (var buff in hero.Buffs)
                 {
-                    if (!E.IsReady())
+                    if (!E.IsReady() && buff.SourceName == "Tristana")
                     {
                         Game.PrintChat("------------------");
                         Game.PrintChat("Source: {0}", buff.SourceName);
