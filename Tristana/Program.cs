@@ -121,7 +121,7 @@ namespace Tristana
             float comboDamage = 0;
             var baseEDamage = ((60 + ((E.Level - 1)*10)) +
                                ((1 + (50 + ((E.Level - 1)*15)/100))*_player.TotalAttackDamage) +
-                                (_player.TotalMagicalDamage*0.5));
+                               (_player.TotalMagicalDamage*0.5));
             if (hero.HasBuff("tristanaechargesound"))
             {
                 CurrentETarget = hero;
@@ -135,7 +135,10 @@ namespace Tristana
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-            throw new NotImplementedException();
+            var baseEDamage = ((60 + ((E.Level - 1)*10)) +
+                               ((1 + (50 + ((E.Level - 1)*15)/100))*_player.TotalAttackDamage) +
+                               (_player.TotalMagicalDamage*0.5));
+            Drawing.DrawText(_player.HPBarPosition.X + 40, _player.HPBarPosition.Y + 30, Color.Aquamarine, "E Damage: {0}", baseEDamage);
         }
 
         private static void OnEnemyGapcloser(ActiveGapcloser gapcloser)
