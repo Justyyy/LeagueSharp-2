@@ -7,5 +7,6 @@ C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\bin\Release\SharpDX.Direct3D9.d
 C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\bin\Release\SharpDX.dll
 C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\bin\Release\clipper_library.dll
 C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\bin\Release\LeagueSharp.xml
+C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\obj\Release\J4Helper.csprojResolveAssemblyReference.cache
 C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\obj\Release\J4Helper.exe
 C:\Users\Alrik\Source\Repos\LeagueSharp\J4Helper\obj\Release\J4Helper.pdb

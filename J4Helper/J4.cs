@@ -61,7 +61,7 @@ namespace J4Helper
 
         private static void Game_OnUpdate(EventArgs args)
         {
-            if (GetPossibleShieldAmount() == MaxShield)
+            if (GetPossibleShieldAmount() == MaxShield && W.IsReady())
             {
                 W.Cast();
             }
@@ -73,9 +73,10 @@ namespace J4Helper
 
         private static void FlagSwag()
         {
+            var cursorPos = Game.CursorPos;
             if (!Q.IsReady() || !Q.IsReady()) return;
-            E.Cast(Game.CursorPos);
-            Q.Cast(Game.CursorPos);
+            E.Cast(cursorPos);
+            Utility.DelayAction.Add(5, () => { Q.Cast(cursorPos); });
         }
 
         private static int GetPossibleShieldAmount()
