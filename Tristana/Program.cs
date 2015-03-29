@@ -120,7 +120,7 @@ namespace Tristana
         {
             float comboDamage = 0;
             var baseEDamage = ((60 + ((E.Level - 1)*10)) +
-                               ((1 + (50 + ((E.Level - 1)*15)/100))*_player.TotalAttackDamage) +
+                               ((1 + (50 + (E.Level - 1) * 15) / 100) * _player.TotalAttackDamage) +
                                (_player.TotalMagicalDamage*0.5));
             if (hero.HasBuff("tristanaechargesound"))
             {
@@ -135,13 +135,13 @@ namespace Tristana
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-            var baseEDamage = 60 + ((E.Level - 1)*10); //+
-                               //((1 + (50 + ((E.Level - 1)*15)/100))*_player.TotalAttackDamage) +
-                               //(_player.TotalMagicalDamage*0.5));
-            var phyDam = ((1 + (50 + ((E.Level - 1)*15)/100))*_player.TotalAttackDamage);
-            var phyDam2 = (1 + (50 + (E.Level - 1)*15)/100)*_player.TotalAttackDamage;
-            Drawing.DrawText(_player.HPBarPosition.X + 40, _player.HPBarPosition.Y + 30, Color.Aquamarine, "E Damage: {0}", baseEDamage);
-            Drawing.DrawText(_player.HPBarPosition.X + 40, _player.HPBarPosition.Y + 60, Color.Aquamarine, "phyDam2: {0}", phyDam2);
+            //var baseEDamage = 60 + ((E.Level - 1)*10); //+
+            //                   //((1 + (50 + ((E.Level - 1)*15)/100))*_player.TotalAttackDamage) +
+            //                   //(_player.TotalMagicalDamage*0.5));
+            //var phyDam = ((1 + (50 + ((E.Level - 1)*15)/100))*_player.TotalAttackDamage);
+            //var phyDam2 = ((1 + (50 + (E.Level - 1)*15)/100)*_player.TotalAttackDamage);
+            //Drawing.DrawText(_player.HPBarPosition.X + 40, _player.HPBarPosition.Y + 30, Color.Aquamarine, "E Damage: {0}", baseEDamage);
+            //Drawing.DrawText(_player.HPBarPosition.X + 40, _player.HPBarPosition.Y + 60, Color.Aquamarine, "phyDam2: {0}", phyDam2);
 
         }
 
