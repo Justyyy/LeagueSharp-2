@@ -44,11 +44,13 @@ namespace Tristana
             Config.SubMenu("Combo").AddItem(new MenuItem("UseQCombo", "Use Q").SetValue(true));
             Config.SubMenu("Combo").AddItem(new MenuItem("UseECombo", "Use E").SetValue(true));
             Config.SubMenu("Combo").AddItem(new MenuItem("UseRCombo", "Use R").SetValue(true));
-            Config.SubMenu("Combo").AddItem(new MenuItem("ComboActive", "Combo!").SetValue(new KeyBind(32, KeyBindType.Press)));
+            Config.SubMenu("Combo")
+                .AddItem(new MenuItem("ComboActive", "Combo!").SetValue(new KeyBind(32, KeyBindType.Press)));
 
             Config.AddSubMenu(new Menu("Harass", "Harass"));
             Config.SubMenu("Harass").AddItem(new MenuItem("UseEHarass", "Use E").SetValue(true));
-            Config.SubMenu("Harass").AddItem(new MenuItem("HarassActive", "Harass").SetValue(new KeyBind(67, KeyBindType.Press)));
+            Config.SubMenu("Harass")
+                .AddItem(new MenuItem("HarassActive", "Harass").SetValue(new KeyBind(67, KeyBindType.Press)));
 
             Config.AddSubMenu(new Menu("Misc", "Misc"));
             Config.SubMenu("Misc").AddItem(new MenuItem("UseAntiGapcloser", "R on Gapclose").SetValue(true));
@@ -94,7 +96,6 @@ namespace Tristana
             Orbwalking.BeforeAttack += Orbwalking_BeforeAttack;
             Config.AddToMainMenu();
             Game.PrintChat("'Rocket Girl Tristana' Loaded!");
-
         }
 
         private static void Obj_AI_Hero_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
@@ -118,11 +119,14 @@ namespace Tristana
         private static float GetComboDamage(Obj_AI_Hero hero)
         {
             float comboDamage = 0;
-            double baseEDamage = ((60 + ((E.Level - 1)*10)) + ((50 + ((E.Level - 1)*15))*_player.TotalAttackDamage) + (_player.TotalMagicalDamage * 0.5));
+            var baseEDamage = ((60 + ((E.Level - 1)*10)) +
+                               ((1 + (50 + ((E.Level - 1)*15)/100))*_player.TotalAttackDamage) +
+                                (_player.TotalMagicalDamage*0.5));
             if (hero.HasBuff("tristanaechargesound"))
             {
                 CurrentETarget = hero;
-                comboDamage += Convert.ToSingle(_player.CalcDamage(hero, Damage.DamageType.Physical, baseEDamage))*EStacks;
+                comboDamage += Convert.ToSingle(_player.CalcDamage(hero, Damage.DamageType.Physical, baseEDamage))*
+                               EStacks;
             }
             return comboDamage;
         }
@@ -145,7 +149,6 @@ namespace Tristana
         }
 
 
-
         private static void Game_OnGameUpdate(EventArgs args)
         {
             foreach (var hero in ObjectManager.Get<Obj_AI_Hero>().Where(h => h.IsEnemy))
@@ -161,9 +164,9 @@ namespace Tristana
                     //}
                 }
             }
-            Q.Range = 541 + 9 * (_player.Level - 1);
-            E.Range = 541 + 9 * (_player.Level - 1);
-            R.Range = 541 + 9 * (_player.Level - 1);
+            Q.Range = 541 + 9*(_player.Level - 1);
+            E.Range = 541 + 9*(_player.Level - 1);
+            R.Range = 541 + 9*(_player.Level - 1);
             if (Config.Item("ComboActive").GetValue<KeyBind>().Active)
             {
                 Combo();
@@ -183,7 +186,10 @@ namespace Tristana
             }
             else
             {
-                if (useE && E.IsReady()) { E.Cast(target); }
+                if (useE && E.IsReady())
+                {
+                    E.Cast(target);
+                }
             }
         }
 
@@ -198,7 +204,11 @@ namespace Tristana
         public static void CheckForExecute()
         {
             foreach (var enemy in 
-                         ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget(R.Range) && ObjectManager.Player.GetSpellDamage(enemy, SpellSlot.R) - 55 > enemy.Health))
+                ObjectManager.Get<Obj_AI_Hero>()
+                    .Where(
+                        enemy =>
+                            enemy.IsValidTarget(R.Range) &&
+                            ObjectManager.Player.GetSpellDamage(enemy, SpellSlot.R) - 55 > enemy.Health))
             {
                 R.CastOnUnit(enemy);
             }
