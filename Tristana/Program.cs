@@ -102,6 +102,7 @@ namespace Tristana
             {
                 Game.PrintChat(args.SData.Name);
             }
+            Game.PrintChat(args.SData.Name);
         }
 
         private static float GetComboDamage(Obj_AI_Hero hero)
