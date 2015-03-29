@@ -125,11 +125,13 @@ namespace Tristana
             {
                 foreach (var buff in hero.Buffs)
                 {
-                    Game.PrintChat("------------------");
-                    Game.PrintChat("Source: {0}", buff.SourceName);
-                    Game.PrintChat("Display: {0}", buff.DisplayName);
-                    Game.PrintChat("Name: {0}", buff.Name);
-                    Game.PrintChat("------------------");
+                    if (buff.Name != "odinplayerbuff" && buff.Name != "gravespassive")
+                    {
+                        Game.PrintChat("------------------");
+                        Game.PrintChat("Source: {0}", buff.SourceName);
+                        Game.PrintChat("Display: {0}", buff.DisplayName);
+                        Game.PrintChat("Name: {0}", buff.Name);
+                    }
                 }
             }
             Q.Range = 541 + 9 * (_player.Level - 1);
