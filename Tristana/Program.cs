@@ -125,7 +125,7 @@ namespace Tristana
             {
                 foreach (var buff in hero.Buffs)
                 {
-                    if (buff.Name != "odinplayerbuff" && buff.Name != "gravespassive")
+                    if (!E.IsReady())
                     {
                         Game.PrintChat("------------------");
                         Game.PrintChat("Source: {0}", buff.SourceName);
