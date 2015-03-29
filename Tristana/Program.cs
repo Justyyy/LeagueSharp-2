@@ -135,9 +135,9 @@ namespace Tristana
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-            var baseEDamage = ((60 + ((E.Level - 1)*10)) +
-                               ((1 + (50 + ((E.Level - 1)*15)/100))*_player.TotalAttackDamage) +
-                               (_player.TotalMagicalDamage*0.5));
+            var baseEDamage = 60 + ((E.Level - 1)*10); //+
+                               //((1 + (50 + ((E.Level - 1)*15)/100))*_player.TotalAttackDamage) +
+                               //(_player.TotalMagicalDamage*0.5));
             Drawing.DrawText(_player.HPBarPosition.X + 40, _player.HPBarPosition.Y + 30, Color.Aquamarine, "E Damage: {0}", baseEDamage);
         }
 
