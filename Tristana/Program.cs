@@ -104,7 +104,7 @@ namespace Tristana
             {
                 EActive = true;
             }
-            if (args.SData.Name == "TristanaBasicAttack" && args.Target.Equals(CurrentETarget))
+            if (args.SData.Name == "TristanaBasicAttack" && (args.Target.Position.X == CurrentETarget.Position.X))
             {
                 EStacks += 0.25f;
             }
