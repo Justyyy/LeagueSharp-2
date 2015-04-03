@@ -1,7 +1,9 @@
 ﻿using System;
-using System.Drawing;
+using System.Collections.Generic;
 using LeagueSharp;
 using LeagueSharp.Common;
+using SharpDX;
+using Color = System.Drawing.Color;
 
 namespace J4Helper
 {
@@ -12,6 +14,7 @@ namespace J4Helper
         public static Spell Q, W, E, R;
         public static Orbwalking.Orbwalker Orbwalker;
         public static Menu Config;
+        public static List<Vector3> EQDrawList; 
 
         public J4()
         {
@@ -57,6 +60,12 @@ namespace J4Helper
         private static void Drawing_OnDraw(EventArgs args)
         {
             Drawing.DrawText(Player.HPBarPosition.X + 40, Player.HPBarPosition.Y + 30, Color.NavajoWhite, "Shield: {0}", GetPossibleShieldAmount());
+            List<Vector3> vectors = EQDrawList;
+            foreach (Vector3 v in vectors)
+            {
+                Drawing.DrawCircle(v, 30, Color.NavajoWhite);
+                Drawing.DrawText(v.X, v.Y, Color.NavajoWhite, "EQ");
+            }
         }
 
         private static void Game_OnUpdate(EventArgs args)
@@ -69,19 +78,21 @@ namespace J4Helper
             {
                 FlagSwag();
             }
+            foreach (var unit in Player.GetEnemiesInRange(E.Range))
+            {
+                EQDrawList.Add(E.GetPrediction(unit).CastPosition);
+            }
         }
 
         private static void FlagSwag()
         {
             var cursorPos = Game.CursorPos;
-            Orbwalker.SetMovement(false);
             if (Q.IsReady() && E.IsReady())
             {
                 E.Cast(cursorPos);
                 Utility.DelayAction.Add(5, () => { Q.Cast(cursorPos); });
                 
             }
-            Orbwalker.SetMovement(true);
         }
 
         private static int GetPossibleShieldAmount()
