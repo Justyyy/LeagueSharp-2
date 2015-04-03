@@ -23,6 +23,7 @@ namespace J4Helper
 
         private static void Game_OnGameLoad(EventArgs args)
         {
+            EQDrawList = new List<Vector3>();
             Player = ObjectManager.Player;
             if (Player.ChampionName != ChampionName) return;
             Q = new Spell(SpellSlot.Q, 700f);
