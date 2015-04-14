@@ -60,13 +60,13 @@ namespace J4Helper
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-            Drawing.DrawText(Player.HPBarPosition.X + 40, Player.HPBarPosition.Y + 30, Color.NavajoWhite, "Shield: {0}", GetPossibleShieldAmount());
+            /*Drawing.DrawText(Player.HPBarPosition.X + 40, Player.HPBarPosition.Y + 30, Color.NavajoWhite, "Shield: {0}", GetPossibleShieldAmount());
             List<Vector3> vectors = EQDrawList;
             foreach (Vector3 v in vectors)
             {
                 Drawing.DrawCircle(v, 30, Color.NavajoWhite);
                 Drawing.DrawText(v.X, v.Y, Color.NavajoWhite, "EQ");
-            }
+            }*/
         }
 
         private static void Game_OnUpdate(EventArgs args)
