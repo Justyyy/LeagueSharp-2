@@ -228,6 +228,7 @@ namespace RollOutTheBarrel
                     if (TargetCloseToQEdge(CurrentQTarget)) ExplodeBarrel();
                     if (CurrentQTarget.IsMoving && TargetIsInQ(CurrentQTarget))
                     {
+                        
                         ExplodeBarrel();
                     }
                 }
