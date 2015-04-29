@@ -244,7 +244,7 @@ namespace RollOutTheBarrel
         {
             if (!UseEAntiGapcloser) return;
             if (sender.IsAlly || sender.IsMinion) return;
-            if(TargetRunningAway((Obj_AI_Hero) sender))
+            if(sender.Distance(_player) < _e.Range && TargetRunningAway((Obj_AI_Hero) sender))
             {
                 _e.Cast(_e.GetPrediction(sender).CastPosition);
             }
