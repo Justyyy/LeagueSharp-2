@@ -1,73 +1,102 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using System.Windows.Input;
-using Gragas;
 using LeagueSharp;
 using LeagueSharp.Common;
-using SharpDX;
-using Color = System.Drawing.Color;
 
 namespace RollOutTheBarrel
 {
     internal class Gragas
     {
-        public static Obj_AI_Hero Player;
-        public const string ChampionName = "Gragas";
-        public static Spell Q, W, E, R;
-        public static Orbwalking.Orbwalker Orbwalker;
-        public static Menu Config;
-        public static GameObject Bomb;
-        public static Vector3 UltPos;
-        public static Vector3 InsecPoint;
-        public static Obj_AI_Hero CurrentQTarget;
+        #region Init
 
         public Gragas()
         {
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
         }
 
+        private static GameObject _barrel;
+        private const string ChampionName = "Gragas";
+        private static Obj_AI_Hero _player;
+        private static Orbwalking.Orbwalker _orbwalker;
+        private static Menu _config;
+        private static Spell _q, _w, _e, _r;
+        //private static List<Obj_AI_Hero> Heroes;
+        private static DateTime? _qCastTime;
+        private static bool BarrelOut { get; set; }
+
+
         private static void Game_OnGameLoad(EventArgs args)
         {
-            Q = new Spell(SpellSlot.Q, 775);
-            W = new Spell(SpellSlot.W, 0);
-            E = new Spell(SpellSlot.E, 600);
-            R = new Spell(SpellSlot.R, 1050);
-            Q.SetSkillshot(0.3f, 110f, 1000f, false, SkillshotType.SkillshotCircle);
-            E.SetSkillshot(0.3f, 50, 1000, true, SkillshotType.SkillshotLine);
-            R.SetSkillshot(0.3f, 700, 1000, false, SkillshotType.SkillshotCircle);
-            Config = new Menu("Gragas", ChampionName, true);
+            //Heroes = new List<Obj_AI_Hero>();
+            _player = ObjectManager.Player;
+            BarrelOut = false;
+            //Init Spells
+            InitSpells();
+            InitMenu();
+            _config.AddToMainMenu();
+            //set barrel to null at start to avoid possible npe
+            _barrel = null;
+            Drawing.OnDraw += Drawing_OnDraw;
+            GameObject.OnCreate += GameObject_OnCreate;
+            GameObject.OnDelete += GameObject_OnDelete;
+            CustomEvents.Unit.OnDash += Unit_OnDash;
+            Game.OnUpdate += Game_OnUpdate;
+            Game.PrintChat("Gragass Loaded.");
+        }
+
+        
+
+        private static void InitSpells()
+        {
+            //init spells
+            _q = new Spell(SpellSlot.Q, 775);
+            _w = new Spell(SpellSlot.W, 0);
+            _e = new Spell(SpellSlot.E, 600);
+            _r = new Spell(SpellSlot.R, 1050);
+
+            //set skillshots
+            _q.SetSkillshot(0.3f, 110f, 1000f, false, SkillshotType.SkillshotCircle);
+            _e.SetSkillshot(0.3f, 50, 1000, true, SkillshotType.SkillshotLine);
+            _r.SetSkillshot(0.3f, 700, 1000, false, SkillshotType.SkillshotCircle);
+        }
+
+        private static void InitMenu()
+        {
+            _config = new Menu("Gragas", ChampionName, true);
             var targetSelectorMenu = new Menu("Target Selector", "Target Selector");
             TargetSelector.AddToMenu(targetSelectorMenu);
-            Config.AddSubMenu(targetSelectorMenu);
+            _config.AddSubMenu(targetSelectorMenu);
 
-            Config.AddSubMenu(new Menu("Orbwalking", "Orbwalking"));
+            _config.AddSubMenu(new Menu("Orbwalking", "Orbwalking"));
+            _orbwalker = new Orbwalking.Orbwalker(_config.SubMenu("Orbwalking"));
 
-            Orbwalker = new Orbwalking.Orbwalker(Config.SubMenu("Orbwalking"));
 
-            Config.AddSubMenu(new Menu("Combo", "Combo"));
-            Config.SubMenu("Combo").AddItem(new MenuItem("UseQCombo", "Use Q").SetValue(true));
-            Config.SubMenu("Combo").AddItem(new MenuItem("UseWCombo", "Use W").SetValue(true));
-            Config.SubMenu("Combo").AddItem(new MenuItem("UseECombo", "Use E").SetValue(true));
-            Config.SubMenu("Combo").AddItem(new MenuItem("UseRCombo", "Use R").SetValue(true));
+            _config.AddSubMenu(new Menu("Combo", "Combo"));
+            _config.SubMenu("Combo").AddItem(new MenuItem("UseQCombo", "Use Q").SetValue(true));
+            _config.SubMenu("Combo").AddItem(new MenuItem("UseWCombo", "Use W").SetValue(true));
+            _config.SubMenu("Combo").AddItem(new MenuItem("UseECombo", "Use E").SetValue(true));
+            _config.SubMenu("Combo").AddItem(new MenuItem("UseRCombo", "Use R").SetValue(true));
 
-            Config.AddSubMenu(new Menu("Harass", "Harass"));
-            Config.SubMenu("Harass").AddItem(new MenuItem("UseQHarass", "Use Q").SetValue(true));
+            _config.AddSubMenu(new Menu("Harass", "Harass"));
+            _config.SubMenu("Harass").AddItem(new MenuItem("UseQHarass", "Use Q").SetValue(true));
 
-            //Config.AddSubMenu(new Menu("LaneClear", "LaneClear"));
-            //Config.SubMenu("LaneClear").AddItem(new MenuItem("UseQLaneClear", "Use Q").SetValue(true));
-            //Config.SubMenu("LaneClear").AddItem(new MenuItem("UseWLaneClear", "Use W").SetValue(true));
-            //Config.SubMenu("LaneClear").AddItem(new MenuItem("UseELaneClear", "Use E").SetValue(true));
-            //Config.SubMenu("LaneClear").AddItem(new MenuItem("UseRLaneClear", "Use R").SetValue(true));
+            _config.AddSubMenu(new Menu("LaneClear", "Lane/Jungle Clear"));
+            _config.SubMenu("LaneClear").AddItem(new MenuItem("UseQLaneClear", "Use Q").SetValue(true));
+            _config.SubMenu("LaneClear").AddItem(new MenuItem("UseWLaneClear", "Use W").SetValue(true));
+            _config.SubMenu("LaneClear").AddItem(new MenuItem("UseELaneClear", "Use E").SetValue(true));
+            _config.SubMenu("LaneClear").AddItem(new MenuItem("UseRLaneClear", "Use R").SetValue(true));
             var miscMenu = new Menu("Misc", "Misc");
             {
                 miscMenu.AddItem(new MenuItem("UseRKillsteal", "Killsteal with R").SetValue(true));
-                miscMenu.AddItem(new MenuItem("UseEAntiGapcloser", "E on Gapclose (Incomplete)").SetValue(true));
+                miscMenu.AddItem(new MenuItem("UseEAntiGapcloser", "E on Gapclose").SetValue(true));
                 miscMenu.AddItem(
                     new MenuItem("InsecKey", "Insec Key").SetValue(new KeyBind("T".ToCharArray()[0],
                         KeyBindType.Press)));
                 miscMenu.AddItem(new MenuItem("UseRAntiGapcloser", "R on Gapclose (Incomplete)").SetValue(true));
                 miscMenu.AddItem(new MenuItem("UsePackets", "Use Packets").SetValue(false));
-                Config.AddSubMenu(miscMenu);
+                _config.AddSubMenu(miscMenu);
             }
 
 
@@ -102,34 +131,63 @@ namespace RollOutTheBarrel
                         DamageIndicator.FillColor = eventArgs.GetNewValue<Circle>().Color;
                     };
 
-                Config.AddSubMenu(drawMenu);
+                _config.AddSubMenu(drawMenu);
             }
-            Config.AddToMainMenu();
-
-            Player = ObjectManager.Player;
-            Game.OnUpdate += Game_OnGameUpdate;
-            Drawing.OnDraw += Drawing_OnDraw;
-            GameObject.OnCreate += OnCreateObject;
-            GameObject.OnDelete += GameObject_OnDelete;
-
-
-            Game.PrintChat("<font color=\"#FF9966\">RollOutTheBarrel -</font> <font color=\"#FFFFFF\">Loaded</font>");
         }
 
-        private static void OnCreateObject(GameObject sender, EventArgs args)
+        #endregion
+        #region Flags
+
+        private static bool UseQCombo
+        {
+            get { return _config.Item("UseQCombo").GetValue<bool>(); }
+        }
+        private static bool UseWCombo
+        {
+            get { return _config.Item("UseWCombo").GetValue<bool>(); }
+        }
+        private static bool UseECombo
+        {
+            get { return _config.Item("UseECombo").GetValue<bool>(); }
+        }
+        private static bool UseRCombo
+        {
+            get { return _config.Item("UseRCombo").GetValue<bool>(); }
+        }
+
+        private static bool UseQLaneClear
+        {
+            get { return _config.Item("UseQLaneClear").GetValue<bool>(); }
+        }
+
+        private static bool UseWLaneClear
+        {
+            get { return _config.Item("UseWLaneClear").GetValue<bool>(); }
+        }
+
+        private static bool UseELaneClear
+        {
+            get { return _config.Item("UseELaneClear").GetValue<bool>(); }
+        }
+
+        private static bool ActiveInsec
+        {
+            get { return _config.Item("InsecKey").IsActive(); }
+        }
+
+        private static bool UseEAntiGapcloser
+        {
+            get { return _config.Item("UseEAntiGapcloser").GetValue<bool>(); }
+        }
+
+        #endregion
+        #region GameObjects
+        private static void GameObject_OnCreate(GameObject sender, EventArgs args)
         {
             if (sender.Name == "Gragas_Base_Q_Ally.troy")
             {
-                Bomb = sender;
-                BombCreateTime = Game.Time;
-                BombMaxDamageTime = BombCreateTime + 2;
-                BarrelIsCast = true;
-            }
-            if (sender.Name == "Gragas_Base_R_End.troy")
-            {
-                Exploded = true;
-                UltPos = sender.Position;
-                Utility.DelayAction.Add(3000, () => { Exploded = false; });
+                _barrel = sender;
+                _qCastTime = DateTime.Now;
             }
         }
 
@@ -137,298 +195,344 @@ namespace RollOutTheBarrel
         {
             if (sender.Name == "Gragas_Base_Q_Ally.troy")
             {
-                Bomb = null;
+                _barrel = null;
+                BarrelOut = false;
+                _qCastTime = null;
             }
         }
 
-        private static void Game_OnGameUpdate(EventArgs args)
+        private static double TimeSinceLastQ()
         {
-            var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
-            if (Orbwalker.ActiveMode.ToString().ToLower() == "combo")
-            {
-                Combo(target);
-            }
-            if (Orbwalker.ActiveMode.ToString().ToLower() == "mixed")
-            {
-                Harass(target);
-            }
+            if (_qCastTime != null) return (DateTime.Now - _qCastTime.Value).TotalSeconds;
+            return 0;
+        }
 
-            if (Config.Item("InsecKey").GetValue<KeyBind>().Active)
+        #endregion
+        #region Events
+
+        private static void Game_OnUpdate(EventArgs args)
+        {
+            //DEBUG Hero list
+            //var heroes = ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsEnemy && hero.Distance(Player) < 1500);
+            //Heroes = heroes.ToList();
+            if (_orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
             {
+                Combo();
+            }
+            else if (_orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear)
+            {
+                LaneClear();
+            }
+            else if (_orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed)
+            {
+                Mixed();
+            }
+            else if (ActiveInsec)
+            {
+                var target = TargetSelector.GetTarget(_player, _r.Range - 100, TargetSelector.DamageType.Magical);
                 Insec(target);
             }
         }
 
-        private static bool FirstQReady()
+
+        private static void Drawing_OnDraw(EventArgs args)
         {
-            if (Q.IsReady() && Bomb == null)
+            //Drawing.DrawText(Player.HPBarPosition.X + 40, Player.HPBarPosition.Y + 40, Color.NavajoWhite, "Time Since Q: {0}", TimeSinceLastQ());
+        }
+
+        private static void Unit_OnDash(Obj_AI_Base sender, Dash.DashItem args)
+        {
+            if (!UseEAntiGapcloser) return;
+            if (sender.IsAlly || sender.IsMinion) return;
+            if(TargetRunningAway((Obj_AI_Hero) sender))
             {
-                BarrelIsCast = false;
-                return true;
-            }
-            return false;
-        }
-
-        private static bool SecondQReady()
-        {
-            return Q.IsReady() && Bomb != null;
-        }
-
-        private static void ExplodeBarrel()
-        {
-            if (!BarrelIsCast) return;
-            Q.Cast();
-            BarrelIsCast = false;
-            CurrentQTarget = null;
-        }
-
-        private static void ThrowBarrel(Obj_AI_Hero tar, bool packet)
-        {
-            if (BarrelIsCast) return;
-            if (Q.Cast(tar, packet) == Spell.CastStates.SuccessfullyCasted)
-            {
-                BarrelIsCast = true;
-                CurrentQTarget = tar;
+                _e.Cast(_e.GetPrediction(sender).CastPosition);
             }
         }
 
-        public static bool BarrelIsCast { get; set; }
-
-        public static bool TargetIsInQ(Obj_AI_Hero t)
+        #endregion
+        #region Misc
+        private static float GetComboDamage(Obj_AI_Hero hero)
         {
-            var qPos = Bomb.Position;
-            var qRadius = Bomb.BoundingRadius;
-            var disTtoQ = t.Distance(qPos);
-
-            if (disTtoQ > qRadius) return false;
-            return true;
+            return 0f;
         }
 
-        public static bool TargetCloseToQEdge(Obj_AI_Hero t)
+        private static bool TargetRunningAway(Obj_AI_Hero hero)
         {
-            var qPos = Bomb.Position;
-            var qRadius = Bomb.BoundingRadius;
-            var disTtoQ = t.Distance(qPos);
-            var difference = qRadius - disTtoQ;
-            if (disTtoQ > qRadius) return false;
-            return difference > 5 && difference < 40;
+            var isfacingplayer = hero.IsFacing(_player);
+            var ismoving = hero.IsMoving;
+            return !isfacingplayer && ismoving && !hero.IsMovementImpaired();
         }
 
-        private static void Harass(Obj_AI_Hero t)
+        #endregion
+        #region Modes
+
+        private static void Combo()
         {
-            var useQ = Config.Item("UseQHarass").GetValue<bool>();
-            if (useQ)
+            #region High Priority Functions
+
+            //if (Player.HasBuff("gragaswself") && CurrentWTarget != null)
+            //{
+            //    Player.IssueOrder(GameObjectOrder.AttackUnit, CurrentWTarget);
+            //    Orbwalker.SetMovement(false);
+            //}
+            //Orbwalker.SetMovement(true);
+
+            #endregion
+
+            #region Q
+
+            if (UseQCombo && _q.IsReady())
             {
-                if (FirstQReady() && t.IsValidTarget(Q.Range))
+                var target = _q.GetTarget();
+                if (target != null)
                 {
-                    ThrowBarrel(t, Config.Item("UsePackets").GetValue<bool>());
-                }
-                if (SecondQReady() && CurrentQTarget != null)
-                {
-                    if (TargetCloseToQEdge(CurrentQTarget)) ExplodeBarrel();
-                    if (CurrentQTarget.IsMoving && TargetIsInQ(CurrentQTarget))
+                    if (target.IsValidTarget(_q.Range) && _barrel == null && !TargetRunningAway(target))
                     {
-                        
-                        ExplodeBarrel();
+                        _q.Cast(_q.GetPrediction(target).CastPosition);
                     }
-                }
-            }
-        }
-
-        private static void Combo(Obj_AI_Hero t)
-        {
-            var useQ = Config.Item("UseQCombo").GetValue<bool>();
-            var useW = Config.Item("UseWCombo").GetValue<bool>();
-            var useE = Config.Item("UseECombo").GetValue<bool>();
-            var useR = Config.Item("UseRCombo").GetValue<bool>();
-            if (useW && W.IsReady() && t.IsValidTarget(Q.Range))
-            {
-                W.Cast();
-            }
-            if (useQ && Q.IsReady())
-            {
-                if (FirstQReady() && t.IsValidTarget(Q.Range))
-                {
-                    ThrowBarrel(t, Config.Item("UsePackets").GetValue<bool>());
-                }
-                if (SecondQReady() && CurrentQTarget != null)
-                {
-                    if (TargetCloseToQEdge(CurrentQTarget)) ExplodeBarrel();
-                    if (CurrentQTarget.IsMoving && TargetIsInQ(CurrentQTarget))
+                    else if (TimeSinceLastQ() >= 2.5)
                     {
-                        ExplodeBarrel();
+                        _q.Cast();
+                    }
+                    else if (_barrel != null && TargetRunningAway(target))
+                    {
+                        _q.Cast();
                     }
                 }
             }
 
+            #endregion
 
-            if (useE && E.IsReady())
+            #region W
+
+            if (UseWCombo && _w.IsReady())
             {
-                if (t.IsValidTarget(E.Range))
+                var target = _w.GetTarget();
+                if (target.IsValidTarget(_e.Range))
                 {
-                    if (E.WillHit(t, E.GetPrediction(t).CastPosition))
+                    _w.GetTarget();
+                    _w.Cast();
+                }
+            }
+
+            #endregion
+
+            #region E
+
+            if (UseECombo && _e.IsReady())
+            {
+                var target = _e.GetTarget();
+                if (target != null && target.IsValidTarget(_e.Range) && !TargetRunningAway(target))
+                {
+                    _e.Cast(_e.GetPrediction(target).CastPosition);
+                }
+            }
+
+            #endregion
+
+            #region R
+
+            if (UseRCombo && _r.IsReady())
+            {
+                var target = _r.GetTarget();
+                if (target != null && target.IsValidTarget(_r.Range) && _r.IsKillable(target))
+                {
+                    _r.Cast(_r.GetPrediction(target).CastPosition);
+                }
+            }
+
+            #endregion
+        }
+
+        
+
+        private static void LaneClear()
+        {
+            #region init laneclear
+
+            var minions = MinionManager.GetMinions(1000);
+            minions.AddRange(MinionManager.GetMinions(1000, MinionTypes.All, MinionTeam.Neutral));
+            Obj_AI_Minion highestHealth = null;
+            foreach (var minion in minions)
+            {
+                if (highestHealth == null)
+                {
+                    highestHealth = minion as Obj_AI_Minion;
+                    continue;
+                }
+                if (minion.Health > highestHealth.Health)
+                {
+                    highestHealth = minion as Obj_AI_Minion;
+                }
+            }
+
+            #endregion
+
+            #region High Priority Functions
+
+            if (_player.HasBuff("gragaswself") && highestHealth != null)
+            {
+                if (highestHealth.Team == GameObjectTeam.Neutral)
+                {
+                    _player.IssueOrder(GameObjectOrder.AttackUnit, highestHealth);
+                    _orbwalker.SetMovement(false);
+                }
+            }
+            _orbwalker.SetMovement(true);
+
+            #endregion
+
+            #region Q
+
+            if (UseQLaneClear && _q.IsReady())
+            {
+                var pos = new List<Obj_AI_Base>();
+                foreach (var minion in minions)
+                {
+                    if (pos.Count == 0)
                     {
-                        if (E.Cast(t) == Spell.CastStates.SuccessfullyCasted)
-                        {
-                            if (ObjectManager.Player.HasBuff("gragaswself"))
-                                ObjectManager.Player.IssueOrder(GameObjectOrder.AutoAttack, t);
-                        }
+                        pos.Add(minion);
+                    }
+                    if (minion.Distance(pos[0]) < 60)
+                    {
+                        pos.Add(minion);
+                    }
+                }
+                if (_barrel == null && pos.Count > 2 && !BarrelOut)
+                {
+                    BarrelOut = true;
+                    _q.Cast(MinionWithMostNeighbors(pos, 60).Position);
+                }
+                else if (TimeSinceLastQ() >= 2.5)
+                {
+                    _q.Cast();
+                }
+                else if (_barrel == null && minions.Count > 0 && !BarrelOut)
+                {
+                    BarrelOut = true;
+                    _q.Cast(MinionWithMostNeighbors(minions, 60).Position);
+                }
+            }
+
+            #endregion
+
+            #region W
+
+            if (UseWLaneClear && _w.IsReady())
+            {
+                if (highestHealth != null)
+                {
+                    _w.Cast();
+                }
+            }
+
+            #endregion
+
+            #region E
+
+            if (UseELaneClear && _e.IsReady())
+            {
+                var pos = new List<Obj_AI_Base>();
+                foreach (var minion in minions)
+                {
+                    if (pos.Count == 0)
+                    {
+                        pos.Add(minion);
+                    }
+                    if (minion.Distance(pos[0]) < 60)
+                    {
+                        pos.Add(minion);
+                    }
+                }
+                if (pos.Count > 0)
+                {
+                    var minionMost = MinionWithMostNeighbors(pos, 30);
+                    if (minionMost.Distance(_player) < 100)
+                    {
+                        _e.Cast(minionMost.Position);
                     }
                 }
             }
 
+            #endregion
+        }
 
-            if (useR && R.IsReady())
+        
+
+        private static void Mixed()
+        {
+            #region Q
+
+            if (_q.IsReady())
             {
-                if (t.IsValidTarget(R.Range))
+                var target = _q.GetTarget();
+                if (target != null)
                 {
-                    if (R.IsKillable(t))
+                    if (target.IsValidTarget(_q.Range) && _barrel == null && !TargetRunningAway(target))
                     {
-                        if (RKillStealIsTargetInQ(t))
-                        {
-                            if (Q.IsKillable(t))
-                            {
-                                ExplodeBarrel();
-                            }
-                        }
-                        else
-                        {
-                            var pred = Prediction.GetPrediction(t, R.Delay, R.Width/2, R.Speed);
-                            R.Cast(pred.CastPosition);
-                        }
+                        _q.Cast(_q.GetPrediction(target).CastPosition);
+                    }
+                    else if (TimeSinceLastQ() >= 2.5)
+                    {
+                        _q.Cast();
+                    }
+                    else if (_barrel != null && TargetRunningAway(target))
+                    {
+                        _q.Cast();
                     }
                 }
             }
-        }
 
-        private static bool RKillStealIsTargetInQ(Obj_AI_Hero target)
-        {
-            return Bomb != null && TargetIsInQ(target);
-        }
-
-        public static double BombMaxDamageTime { get; set; }
-        public static double BombCreateTime { get; set; }
-
-        private static float GetComboDamage(Obj_AI_Base target)
-        {
-            float comboDamage = 0;
-            var abilityFlag = false;
-            var hasSheen = false;
-            var hasIceborn = false;
-            var hasLichBane = false;
-            if (ObjectManager.Player.InventoryItems.Any(item => item.DisplayName == "Sheen"))
-            {
-                hasSheen = true;
-            }
-            if (ObjectManager.Player.InventoryItems.Any(item => item.DisplayName == "Iceborn Gauntlet"))
-            {
-                hasSheen = false;
-                hasIceborn = true;
-            }
-            if (ObjectManager.Player.InventoryItems.Any(item => item.DisplayName == "Lich Bane"))
-            {
-                hasSheen = false;
-                hasIceborn = false;
-                hasLichBane = true;
-            }
-
-            if (Q.IsReady())
-            {
-                comboDamage += (float) ObjectManager.Player.GetSpellDamage(target, SpellSlot.Q);
-                abilityFlag = true;
-            }
-            if (W.IsReady())
-            {
-                comboDamage += (float) ObjectManager.Player.GetSpellDamage(target, SpellSlot.W);
-                abilityFlag = true;
-            }
-            if (E.IsReady())
-            {
-                comboDamage += (float) ObjectManager.Player.GetSpellDamage(target, SpellSlot.E);
-                abilityFlag = true;
-            }
-            if (R.IsReady())
-            {
-                comboDamage += (float) ObjectManager.Player.GetSpellDamage(target, SpellSlot.R);
-                abilityFlag = true;
-            }
-            if (hasLichBane && abilityFlag)
-            {
-                comboDamage +=
-                    (float)
-                        ObjectManager.Player.CalcDamage(target, Damage.DamageType.Magical,
-                            ObjectManager.Player.BaseAttackDamage*.75) +
-                    (float) (ObjectManager.Player.FlatMagicDamageMod*.50);
-            }
-            else if (hasIceborn && abilityFlag)
-            {
-                comboDamage +=
-                    (float)
-                        ObjectManager.Player.CalcDamage(target, Damage.DamageType.Physical,
-                            (ObjectManager.Player.BaseAttackDamage*1.25));
-            }
-            else if (hasSheen && abilityFlag)
-            {
-                comboDamage +=
-                    (float)
-                        ObjectManager.Player.CalcDamage(target, Damage.DamageType.Physical,
-                            (ObjectManager.Player.BaseAttackDamage*1));
-            }
-            return comboDamage;
+            #endregion
         }
 
         private static void Insec(Obj_AI_Hero t)
         {
             Orbwalking.Orbwalk(null, Game.CursorPos);
-            InsecPoint = Player.Position.Extend(t.Position, Player.Distance(t) + 170);
-            if (R.IsInRange(InsecPoint) && t.Distance(InsecPoint) < 350)
-                R.Cast(InsecPoint);
-            if (!Exploded) return;
+            var insecPoint = _player.Position.Extend(t.Position, _player.Distance(t) + 170);
+            if (_r.IsInRange(insecPoint)&& !TargetRunningAway(t) && t.Distance(insecPoint) < 350)
+                _r.Cast(insecPoint);
+            
 
-            var ePos = E.GetPrediction(t);
+            var ePos = _e.GetPrediction(t);
             var qCastPos = ePos.CastPosition; //UltPos.Extend(ePos, 600);
 
-            if (FirstQReady())
+            if (!BarrelOut)
             {
-                Q.Cast(qCastPos);
-                E.Cast(qCastPos);
+                _q.Cast(qCastPos);
+                _e.Cast(qCastPos);
             }
-            if (SecondQReady())
+            if (BarrelOut)
             {
-                if (t.IsMoving && t.Distance(Bomb.Position) < Bomb.BoundingRadius)
+                if (t.IsMoving && t.Distance(_barrel.Position) < _barrel.BoundingRadius)
                 {
-                    ExplodeBarrel();
+                    _q.Cast();
                 }
-                if ((Game.Time - BombMaxDamageTime) >= 0)
+                if (TimeSinceLastQ() >= 2.5)
                 {
-                    if (Bomb != null && t.Distance(Bomb.Position) < Bomb.BoundingRadius)
+                    if (_barrel != null && t.Distance(_barrel.Position) < _barrel.BoundingRadius)
                     {
-                        ExplodeBarrel();
+                        _q.Cast();
                     }
                 }
             }
         }
 
-        public static bool Exploded { get; set; }
-
-        private static void Drawing_OnDraw(EventArgs args)
+        private static Obj_AI_Base MinionWithMostNeighbors(List<Obj_AI_Base> minions, int range)
         {
-            var hppos = ObjectManager.Player.HPBarPosition;
-            var ppos = Drawing.WorldToScreen(ObjectManager.Player.Position);
-            Drawing.DrawText(ppos[0] - 80, ppos[1], Color.Green, Orbwalker.ActiveMode.ToString());
-            if (Keyboard.IsKeyDown(Key.T))
+            var organized = new Dictionary<Obj_AI_Base, int>();
+            foreach (var minion in minions)
             {
-                Drawing.DrawText(ppos[0] - 40, ppos[1], Color.Red, "INSEC ACTIVE");
+                var count = minions.Count(min => minion.Distance(min) < range);
+                if (!organized.ContainsKey(minion))
+                {
+                    organized.Add(minion, count);
+                }
             }
-            if (Q.IsReady() && E.IsReady() && R.IsReady())
-            {
-                Drawing.DrawText(hppos[0] + 20, hppos[1] - 45, Color.LawnGreen, "Insec Ready");
-            }
-            else
-            {
-                Drawing.DrawText(hppos[0] + 20, hppos[1] - 45, Color.Red, "Insec Not Ready");
-            }
-            Drawing.DrawCircle(InsecPoint, 75, Color.Blue);
+            var sorted = organized.OrderBy(entry => entry.Value);
+            return sorted.Last().Key;
         }
+        #endregion
     }
 }

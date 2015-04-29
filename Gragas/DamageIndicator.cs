@@ -5,14 +5,7 @@ using LeagueSharp.Common;
 using SharpDX;
 using Color = System.Drawing.Color;
 
-/*
- *  All credit for the following class goes to xSalice
- * 
- * 
- * 
- * */
-
-namespace Gragas
+namespace RollOutTheBarrel
 {
     class DamageIndicator
     {

@@ -1,2 +1,0 @@
-C:\Users\Alrik\Documents\GitHub\LeagueSharp\Gragas\bin\Debug\RollOutTheBarrel.exe.config
-C:\Users\Alrik\Source\Repos\LeagueSharp\Gragas\bin\Debug\RollOutTheBarrel.exe.config
