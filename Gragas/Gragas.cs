@@ -249,11 +249,11 @@ namespace RollOutTheBarrel
         private static void Drawing_OnDraw(EventArgs args)
         {
             //Drawing.DrawText(Player.HPBarPosition.X + 40, Player.HPBarPosition.Y + 40, Color.NavajoWhite, "Time Since Q: {0}", TimeSinceLastQ());
-            Drawing.DrawCircle(PlayerPos, 65, Color.NavajoWhite);
-            Drawing.DrawCircle(QPos, 65, Color.NavajoWhite);
-            Drawing.DrawCircle(TargetPos, 65, Color.NavajoWhite);
-            Drawing.DrawLine(PlayerPos.To2D(), QPos.To2D(), 10, Color.NavajoWhite);
-            Drawing.DrawLine(QPos.To2D(), TargetPos.To2D(), 10, Color.NavajoWhite);
+            //Drawing.DrawCircle(PlayerPos, 65, Color.NavajoWhite);
+            //Drawing.DrawCircle(QPos, 65, Color.NavajoWhite);
+            //Drawing.DrawCircle(TargetPos, 65, Color.NavajoWhite);
+            //Drawing.DrawLine(PlayerPos.To2D(), QPos.To2D(), 10, Color.NavajoWhite);
+            //Drawing.DrawLine(QPos.To2D(), TargetPos.To2D(), 10, Color.NavajoWhite);
         }
 
         private static void Unit_OnDash(Obj_AI_Base sender, Dash.DashItem args)
