@@ -329,6 +329,10 @@ namespace RollOutTheBarrel
                 {
                     _e.CastIfHitchanceEquals(target, HitChance.High);
                 }
+                if (target != null && target.IsValidTarget(_e.Range - 100) && TargetRunningAway(target))
+                {
+                    _e.CastIfHitchanceEquals(target, HitChance.High);
+                }
             }
 
             #endregion
