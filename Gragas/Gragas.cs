@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
+using SharpDX;
+using Collision = LeagueSharp.Common.Collision;
+using Color = System.Drawing.Color;
 
 namespace RollOutTheBarrel
 {
@@ -325,7 +327,7 @@ namespace RollOutTheBarrel
                 var target = _e.GetTarget();
                 if (target != null && target.IsValidTarget(_e.Range) && !TargetRunningAway(target))
                 {
-                    _e.Cast(_e.GetPrediction(target).CastPosition);
+                    _e.CastIfHitchanceEquals(target, HitChance.High);
                 }
             }
 
