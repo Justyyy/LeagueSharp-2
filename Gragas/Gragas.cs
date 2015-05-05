@@ -31,6 +31,8 @@ namespace RollOutTheBarrel
 
         private static void Game_OnGameLoad(EventArgs args)
         {
+            if (player.ChampionName != ChampName)
+                return;
             //Heroes = new List<Obj_AI_Hero>();
             _player = ObjectManager.Player;
             BarrelOut = false;
